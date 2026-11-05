@@ -1,0 +1,200 @@
+.root {
+  /* // paddingTop: 100px; */
+  width: 100% !important;
+  height: 1rem !important;
+  border-spacing: 0 !important;
+  border: 1px solid #d3d3d3 !important;
+}
+
+.tableCellM {
+  padding: 1px !important;
+
+  border-right: 1px solid #d3d3d3 !important;
+  font-size: 12pt !important;
+  font-family: Arial, sans-serif;
+  text-align: right !important;
+  background: #ff9900 !important;
+  color: #fff !important;
+}
+
+.tableCellM1 {
+  padding: 1px 1px 1px 10px !important;
+
+  border-right: 1px solid #d3d3d3 !important;
+  font-size: 12pt !important;
+  font-family: Arial, sans-serif;
+  text-align: right !important;
+  background: #f3f3f3 !important;
+  color: #ff9900 !important;
+}
+
+.tableCell {
+  padding: 1px 1px 1px 5px !important;
+  /* // cursor / pointer; */
+  border-right: 1px solid #d3d3d3 !important;
+  font-size: 12pt !important;
+  font-family: Arial, sans-serif;
+  text-align: right;
+  background: #f3f3f3 !important;
+}
+
+.tableCellGeo {
+  padding: 1px !important;
+  cursor: pointer !important;
+  border-right: 1px solid #d3d3d3 !important;
+  font-size: 12pt !important;
+  font-family: Arial, sans-serif !important;
+  text-align: right !important;
+  background: #f3f3f3 !important;
+}
+
+.tableCellGeo:hover {
+  background-color: rgb(7, 17, 77, 0.42) !important;
+}
+.tableCellL {
+  padding: 1px 1px 1px 5px !important;
+
+  border-right: 1px solid #d3d3d3 !important;
+  font-size: 12pt !important;
+  font-family: Arial, sans-serif !important;
+  text-align: right !important;
+  background: #f3f3f3 !important;
+  color: #707070 !important;
+}
+.tableCell1 {
+  border-right: 1px solid #d3d3d3 !important;
+  padding: 1px 1px 0px 5px !important;
+  align-items: center !important;
+  /* // borderRight: 5px solid White!important; */
+  font-size: 12pt !important;
+  font-family: Arial, sans-serif !important;
+  text-align: right;
+  background: #f3f3f3 !important;
+}
+.tableCellCost {
+  padding: 1px 1px 1px 50px !important;
+
+  border-right: 5px solid White !important;
+  font-size: 12pt !important;
+  font-family: Arial, sans-serif !important;
+  text-align: right !important;
+  background: #f3f3f3 !important;
+}
+.tableGreen {
+  padding: 1px 1px 1px 1px !important;
+  border-right: 1px solid #d3d3d3 !important;
+  border-left: 5px solid white !important;
+  font-size: 12pt !important;
+  font-family: Arial, sans-serif !important;
+  text-align: right !important;
+  background: #e8f5e9 !important;
+  color: #000 !important;
+}
+
+.tableGreen1 {
+  padding: 1px !important;
+
+  border-right: 5px solid white !important;
+  font-size: 12pt !important;
+  font-family: Arial, sans-serif !important;
+  text-align: right !important;
+  background: #e8f5e9 !important;
+  color: #000 !important;
+}
+
+.tableHeader {
+  font-size: 12pt !important;
+  background-color: #f3f3f3 !important;
+  color: #cccccc !important;
+  border-bottom: 1px solid #d3d3d3 !important;
+  border-right: 1px solid #d3d3d3 !important;
+}
+.tableHeader3 {
+  font-size: 12pt !important;
+  background-color: #ffffff !important;
+  color: #cccccc !important;
+  border-bottom: 1px solid #d3d3d3 !important;
+  border-right: 5px solid #cccccc !important;
+}
+
+.tableRow {
+  text-align: cente !important;
+  border-color: inherit !important;
+}
+
+.tableHeader1 {
+  font-size: 12pt !important;
+  background-color: #f3f3f3 !important;
+  color: #cccccc !important;
+  border-bottom: 1px solid #cccccc !important;
+  border-right: 5px solid White !important;
+}
+
+.headerGreen {
+  border-right: 1px solid #cccccc !important;
+  color: #cccccc !important;
+  border-bottom: 1px solid #cccccc !important;
+  font-size: 12pt !important;
+  font-family: sans-serif !important;
+  text-align: center !important;
+  background: #e8f5e9 !important;
+}
+
+.headerGreen1 {
+  border-right: 1px solid #cccccc !important;
+  color: #cccccc !important;
+  border-bottom: 1px solid #cccccc !important;
+  font-size: 12pt !important;
+  font-family: sans-serif !important;
+  text-align: center !important;
+  background: #e8f5e9 !important;
+}
+
+.group1 {
+  font-weight: bold !important;
+  align-items: center !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  font-size: 12pt !important;
+  background-color: #f3f3f3 !important;
+  color: #000000 !important;
+  border-bottom: 1px solid #cccccc !important;
+  border-right: 1px solid #cccccc !important;
+  padding: 0.3rem !important;
+}
+
+.group2 {
+  font-weight: bold !important;
+  cursor: pointer !important;
+  align-items: center !important;
+  white-space: nowrap !important;
+  font-size: 12pt !important;
+  background-color: #f3f3f3 !important;
+  color: #000000 !important;
+  border-bottom: 1px solid #cccccc !important;
+  border-right: 1px solid #cccccc;
+  padding: 0.3rem !important;
+}
+.group2:hover {
+  text-decoration: underline !important;
+}
+.group5 {
+  /* font-weight: "bold !important"; */
+  font-size: 12pt !important;
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-bottom: 1px solid #cccccc !important;
+  border-right: 1px solid #cccccc !important;
+  padding: 0.3rem !important;
+}
+
+.spacedBody {
+  padding-bottom: 100px !important;
+  border-bottom: 8px solid white !important;
+}
+
+.Thead {
+  position: sticky;
+  top: 128;
+  z-index: 10;
+}

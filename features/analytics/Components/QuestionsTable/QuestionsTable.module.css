@@ -1,0 +1,196 @@
+.root {
+  width: 100%;
+  height: 1rem;
+  border-spacing: 0;
+  border: 1px solid #d3d3d3;
+}
+.styles {
+  padding: 1rem 1rem 3rem 1rem;
+}
+
+.styles table {
+  border-spacing: 0 !important;
+  border: 1px solid #cccccc !important;
+  width: 100% !important;
+  overflow-y: scroll !important;
+  overflow-x: scroll !important;
+}
+
+.styles tr {
+  height: 1rem;
+}
+
+.tableCellM {
+  padding: 0px 16px !important;
+
+  border-right: 1px solid #d3d3d3 !important;
+  font-size: 12pt !important;
+  font-family: "Arial; sans-serif ";
+  text-align: right !important;
+  background: #ff9900 !important;
+  color: #fff !important;
+}
+
+.tableCellM1 {
+  padding: 1px 1px 1px 10px !important;
+  /* color:#ff9900 */
+  border-right: 1px solid #d3d3d3;
+  font-size: 12pt !important;
+  font-family: "Arial; sans-serif";
+  text-align: right !important;
+  background: #f3f3f3 !important;
+  color: #ff9900 !important;
+}
+
+.tableCell {
+  padding: 1px 1px 1px 10px !important;
+  /* // cursor: pointer!important; */
+  border-right: 1px solid #d3d3d3 !important;
+  font-size: 12pt !important;
+  font-family: "Arial; sans-serif";
+  text-align: right !important;
+  background: #f3f3f3 !important;
+}
+
+.tableCellGeo {
+  padding: 1px !important;
+  cursor: pointer !important;
+  border-right: 1px solid #d3d3d3 !important;
+  font-size: 12pt !important;
+  font-family: "Arial; sans-serif";
+  text-align: right !important;
+  background: #f3f3f3 !important;
+}
+.tableCellGeo:hover {
+  background-color: "rgb(7!important; 177!important; 77!important; 0.42)" !important;
+}
+.tableCellL {
+  padding: 1px !important;
+
+  border-right: 1px solid #d3d3d3 !important;
+  font-size: 12pt !important;
+  font-family: "Arial; sans-serif";
+  text-align: right !important;
+  background: #f3f3f3 !important;
+  color: #707070 !important;
+}
+.tableCell1 {
+  padding: 1px !important;
+
+  border-right: 1px solid #cccc;
+  font-size: 12pt !important;
+  font-family: "Arial; sans-serif";
+  text-align: right !important;
+  background: #f3f3f3 !important;
+}
+
+.tableGreen {
+  padding: 1px 1px 1px 12px !important;
+  border-right: 1px solid #d3d3d3;
+  font-size: 12pt !important;
+  font-family: "Arial; sans-serif";
+  text-align: right !important;
+  background: #e8f5e9 !important;
+  color: #000;
+}
+
+.tableGreen1 {
+  padding: 1px !important;
+
+  border-right: 5px solid white !important;
+  font-size: 12pt !important;
+  font-family: "Arial; sans-serif";
+  text-align: right !important;
+  background: #e8f5e9 !important;
+  color: #000;
+}
+
+.tableHeader {
+  padding: 10px;
+  font-size: 12pt !important;
+  background-color: #f3f3f3 !important;
+  color: #cccccc !important;
+  border-bottom: 1px solid #d3d3d3 !important;
+  border-right: 1px solid #d3d3d3;
+}
+.tableHeader3 {
+  padding: 10px !important;
+  font-size: 12pt !important;
+  background-color: #ffffff !important;
+  color: #cccccc !important;
+  border-bottom: 1px solid #d3d3d3 !important;
+  border-right: 1px solid #cccccc !important;
+}
+
+.tableRow {
+  text-align: center !important;
+  border-color: inherit !important;
+}
+
+.tableHeader1 {
+  padding: 10px !important;
+  font-size: 12pt !important;
+  background-color: #f3f3f3 !important;
+  color: #cccccc !important;
+  border-bottom: 1px solid #cccccc !important;
+  border-right: 5px solid white;
+}
+
+.headerGreen {
+  border-right: 1px solid #cccccc !important;
+  color: #cccccc !important;
+  border-bottom: 1px solid #cccccc !important;
+  font-size: 12pt !important;
+  font-family: sans-serif !important;
+  text-align: center !important;
+  background: #e8f5e9 !important;
+}
+
+.headerGreen1 {
+  border-right: 1px solid #cccccc;
+  color: #cccccc !important;
+  border-bottom: 1px solid #cccccc !important;
+  font-size: 12pt !important;
+  font-family: sans-serif !important;
+  text-transform: center !important;
+  background: #e8f5e9 !important;
+}
+
+.group1 {
+  font-weight: 550 !important;
+  font-size: 12pt !important;
+  background-color: #f3f3f3 !important;
+  color: #000000 !important;
+  border-bottom: 1px solid #cccccc !important;
+  border-right: 1px solid #cccccc !important;
+  padding: 0.3rem !important;
+}
+
+.group2 {
+  font-weight: 550 !important;
+  font-size: 12pt !important;
+  background-color: #f3f3f3;
+  color: #000000 !important;
+  border-bottom: 1px solid #cccccc !important;
+  border-right: 1px solid #cccccc;
+  padding: 0.3rem !important;
+}
+.group5 {
+  font-size: 12pt !important;
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-bottom: 1px solid #cccccc !important;
+  border-right: 1px solid #cccccc !important;
+  padding: 0.3rem !important;
+}
+
+.spacedBody {
+  padding-bottom: 100px !important;
+  border-bottom: 8px solid white !important;
+}
+
+.Thead {
+  position: sticky !important;
+  top: 65 !important;
+  z-index: 10 !important;
+}

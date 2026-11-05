@@ -1,0 +1,24 @@
+.root {
+  flex-grow: 1;
+  background-color: white;
+  display: flex;
+  min-width: 0;
+  width: 100%;
+}
+.tabs {
+  /* width: 10%; */
+  border-right: 1px solid black;
+}
+.tab {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+  width: 100% !important;
+  padding: 0;
+  height: 200px;
+}
+
+.tab[hidden] {
+  display: none;
+}

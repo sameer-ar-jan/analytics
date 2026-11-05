@@ -1,0 +1,10 @@
+.textField {
+  /* "& .MuiOutlinedInput-input": {
+      padding: "13.5px 14px";
+    } */
+}
+.textSpace {
+  margin-top: 10px;
+  font-size: 20px !important;
+  margin-left: 10px !important;
+}

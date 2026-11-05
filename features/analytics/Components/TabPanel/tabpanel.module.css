@@ -1,0 +1,53 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: 100%;
+  flex-grow: 1;
+  background-color: white;
+  height: 100%;
+}
+.root > header {
+  flex-shrink: 0;
+}
+.root > [role="tabpanel"] {
+  width: 100%;
+  min-width: 0;
+}
+.root > [role="tabpanel"][hidden] {
+  display: none;
+}
+.eventControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+}
+.eventControls > [role="tablist"],
+.eventControls > div {
+  min-width: 0;
+  max-width: 100%;
+}
+.roott {
+  flex-grow: 1;
+  background-color: white;
+  height: 100%;
+}
+.root1 {
+  /* [theme.breakpoints.up(600)]: {
+       &.MuiTab-root: { minWidth: 130px !important, color: black }, 
+    } */
+}
+.root2 {
+  /* [theme.breakpoints.up(600)]: {
+       &.MuiTab-root: { minWidth: 100px !important, color: black }, 
+    } */
+}
+.tabpanel {
+  width: 100%;
+}
+.tabpanel1 {
+  background: #f3f3f3;
+  /* height: 80% !important; */
+}

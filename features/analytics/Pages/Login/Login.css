@@ -1,0 +1,41 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Inter, sans-serif;
+}
+
+.login-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    background-color: #f9f9f9;
+    height: 90px;
+    padding: 100px 85px;
+    
+    
+}
+
+
+ 
+.login-wrapper > h3, .login-wrapper > h4 {
+    margin: 0;
+}
+
+.login-wrapper > h3 {
+    margin-right: Auto;
+    color: #f4f8f7;
+    font-weight: 700;
+    font-size: 22px;
+}
+
+ 
+
+.login-wrapper > img {
+    margin-right: auto;
+    height: 80px;
+    margin-top: -40px;
+    
+}

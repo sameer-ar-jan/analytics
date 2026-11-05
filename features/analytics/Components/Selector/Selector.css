@@ -1,0 +1,76 @@
+.buttons-container {
+  display: flex;
+  width: 100%;
+  max-width: calc(100vw - 300px); /* Increased space for input field and action buttons */
+  overflow-x: auto;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0; /* Allow container to shrink */
+}
+
+@media (max-width: 768px) {
+  .buttons-container {
+    max-width: calc(100vw - 220px);
+  }
+}
+
+@media (max-width: 480px) {
+  .buttons-container {
+    max-width: calc(100vw - 200px);
+  }
+}
+
+.buttons-scroll-container {
+  display: flex;
+  white-space: nowrap;
+  flex-wrap: nowrap;
+  gap: 6px;
+  padding: 0 6px;
+  align-items: center;
+  min-height: 40px;
+  width: max-content; /* Ensure container expands to fit all buttons */
+}
+
+.button {
+  background-color: lightgray !important;
+  border: none;
+  padding: 8px 16px;
+  margin: 8px;
+  cursor: pointer;
+}
+
+[class$="MuiToolbar-root"] {
+  /* Styles for classes ending with "-MuiTableCell-root" */
+  background-color: #f3f3f3;
+}
+
+/* Ensure buttons don't shrink below their content size */
+.buttons-scroll-container button {
+  flex-shrink: 0;
+  min-width: fit-content;
+}
+
+/* Add smooth scrolling for better UX */
+.buttons-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.buttons-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.buttons-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.buttons-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Ensure the container can scroll horizontally */
+.buttons-container {
+  scrollbar-width: thin;
+  scrollbar-color: #c1c1c1 #f1f1f1;
+}

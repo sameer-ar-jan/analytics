@@ -1,0 +1,8 @@
+.icnBtn {
+  padding-left: 50px;
+  width: 20px;
+}
+[class$="-MuiButtonBase-root-MuiIconButton-root"] {
+  /* gtytStyles for classes ending with "-MuiTableCell-root" */
+  width: 40px;
+}
