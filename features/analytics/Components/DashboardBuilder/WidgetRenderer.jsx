@@ -6,6 +6,7 @@ import { getReportDay } from "../Charts/chartDates";
 import D3Chart from "./D3Chart";
 import {
   buildDailySeries,
+  buildSourceTotals,
   buildSourceEfficiency,
   filterDashboardRows,
   getMetricTotal,
@@ -174,6 +175,7 @@ export default function WidgetRenderer({ widget, rows = [], days = 30, loading =
     () => {
       if (widget?.kind !== "chart") return [];
       if (widget.metric === "source-efficiency") return buildSourceEfficiency(rows, days);
+      if (widget.metric === "source-total-spend") return buildSourceTotals(rows, days, "spend");
       return buildDailySeries(rows, widget.metric, days);
     },
     [widget, rows, days],

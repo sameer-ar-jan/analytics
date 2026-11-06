@@ -13,7 +13,7 @@ import styles from "./dashboard.module.css";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 
-const STORAGE_KEY = "analytics-dashboard-layout-v2";
+const STORAGE_KEY = "analytics-dashboard-layout-v3";
 const WIDGET_DEFINITIONS = [
   { type: "metric-users", title: "New Users", kind: "metric", metric: "users" },
   { type: "metric-dau", title: "Daily Active Users", kind: "metric", metric: "dau" },
@@ -34,6 +34,8 @@ const WIDGET_DEFINITIONS = [
   { type: "d3-source-stacked-area", title: "Spend by Source · D3 Stacked Area", kind: "chart", metric: "source-spend", engine: "d3", chartType: "stacked-area" },
   { type: "d3-source-pie", title: "Spend Share · D3 Pie", kind: "chart", metric: "source-spend", engine: "d3", chartType: "pie" },
   { type: "d3-source-donut", title: "Spend Share · D3 Donut", kind: "chart", metric: "source-spend", engine: "d3", chartType: "donut" },
+  { type: "d3-installs-donut", title: "Installs by Media Source · D3 Donut", kind: "chart", metric: "source-installs", engine: "d3", chartType: "donut" },
+  { type: "d3-source-bar-total", title: "Spend by Media Source · D3 Bar", kind: "chart", metric: "source-total-spend", engine: "d3", chartType: "category-bar" },
   { type: "d3-source-treemap", title: "Spend Share · D3 Treemap", kind: "chart", metric: "source-spend", engine: "d3", chartType: "treemap" },
   { type: "d3-source-heatmap", title: "Daily Spend by Source · D3 Heatmap", kind: "chart", metric: "source-spend", engine: "d3", chartType: "heatmap" },
   { type: "d3-source-scatter", title: "Spend vs Installs · D3 Scatter", kind: "chart", metric: "source-efficiency", engine: "d3", chartType: "scatter" },
@@ -45,11 +47,25 @@ const WIDGET_DEFINITIONS = [
   { type: "media-table", title: "Media Source Performance", kind: "table" },
 ];
 const WIDGET_BY_TYPE = Object.fromEntries(WIDGET_DEFINITIONS.map((item) => [item.type, item]));
-const initialWidgets = WIDGET_DEFINITIONS.map((definition) => ({
-  id: `${definition.type}-default`,
-  ...definition,
+const DEFAULT_WIDGET_TYPES = [
+  "metric-users",
+  "metric-dau",
+  "metric-revenue",
+  "metric-spend",
+  "d3-users-line",
+  "d3-source-bar-total",
+  "d3-installs-donut",
+  "d3-revenue-area",
+  "d3-source-scatter",
+  "d3-source-treemap",
+  "media-table",
+];
+const initialWidgets = DEFAULT_WIDGET_TYPES.map((type) => ({
+  ...WIDGET_BY_TYPE[type],
+  id: `${type}-default`,
 }));
-const chartCount = WIDGET_DEFINITIONS.filter((definition) => definition.kind === "chart").length;
+const metricCount = initialWidgets.filter((widget) => widget.kind === "metric").length;
+const chartCount = initialWidgets.filter((widget) => widget.kind === "chart").length;
 const tableY = 8 + Math.ceil(chartCount / 2) * 10;
 const initialLayout = initialWidgets.map((widget, index) => {
   if (widget.kind === "metric") {
@@ -58,7 +74,7 @@ const initialLayout = initialWidgets.map((widget, index) => {
   if (widget.kind === "table") {
     return { i: widget.id, x: 0, y: tableY, w: 12, h: 13, minW: 6, minH: 8 };
   }
-  const chartIndex = index - 5;
+  const chartIndex = index - metricCount;
   return { i: widget.id, x: (chartIndex % 2) * 6, y: 8 + Math.floor(chartIndex / 2) * 10, w: 6, h: 10, minW: 4, minH: 7 };
 });
 

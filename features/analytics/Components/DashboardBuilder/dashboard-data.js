@@ -100,9 +100,10 @@ export function buildDailySeries(rows, metric, days = 30, now = new Date()) {
     const key = toLocalDateKey(timestamp);
     const bucket = buckets.get(key) || { date, values: new Map() };
 
-    if (metric === "source-spend") {
+    if (metric === "source-spend" || metric === "source-installs") {
       MEDIA_SOURCES.forEach((source) => {
-        const value = numberOrZero(row?.[`${source.prefix}_cost`]);
+        const field = metric === "source-spend" ? "cost" : "users";
+        const value = numberOrZero(row?.[`${source.prefix}_${field}`]);
         bucket.values.set(source.label, (bucket.values.get(source.label) || 0) + value);
       });
     } else {
@@ -120,6 +121,13 @@ export function buildDailySeries(rows, metric, days = 30, now = new Date()) {
       value,
       category,
     })));
+}
+
+export function buildSourceTotals(rows, days = 30, metric = "spend", now = new Date()) {
+  return aggregateMediaSources(rows, days, now).map((source) => ({
+    category: source.label,
+    value: metric === "users" ? source.installs : source.spend,
+  }));
 }
 
 export function aggregateMediaSources(rows, days = 30, now = new Date()) {

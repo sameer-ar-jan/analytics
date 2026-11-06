@@ -161,6 +161,41 @@ function renderScatter(svg, data, title) {
     .text((item) => `${item.category} · Spend ${formatNumber(item.x)} · Installs ${formatNumber(item.y)}`);
 }
 
+function renderCategoryBar(svg, data, title) {
+  const width = 720;
+  const height = 330;
+  const margin = { top: 32, right: 24, bottom: 42, left: 92 };
+  const rows = Array.from(d3.rollup(data, (items) => d3.sum(items, (item) => item.value), (item) => item.category), ([category, value]) => ({ category, value }))
+    .filter((item) => item.value > 0)
+    .sort((first, second) => second.value - first.value);
+  if (!rows.length) return;
+  const x = d3.scaleLinear().domain([0, d3.max(rows, (item) => item.value) || 1]).nice().range([margin.left, width - margin.right]);
+  const y = d3.scaleBand().domain(rows.map((item) => item.category)).range([margin.top, height - margin.bottom]).padding(0.2);
+  const color = d3.scaleOrdinal(rows.map((item) => item.category), COLORS);
+  svg.attr("viewBox", `0 0 ${width} ${height}`).attr("preserveAspectRatio", "xMidYMid meet");
+  svg.append("text").attr("class", styles.d3ChartTitle).attr("x", margin.left).attr("y", 20).text(title || "Spend by media source");
+  svg.append("g").attr("class", styles.d3Grid).attr("transform", `translate(${margin.left},0)`)
+    .call(d3.axisLeft(y).tickSize(0))
+    .call((axis) => axis.select(".domain").remove());
+  svg.append("g").attr("transform", `translate(0,${height - margin.bottom})`)
+    .call(d3.axisBottom(x).ticks(5).tickFormat(formatNumber));
+  svg.selectAll("rect.category-bar").data(rows).join("rect")
+    .attr("class", "category-bar")
+    .attr("x", margin.left)
+    .attr("y", (item) => y(item.category))
+    .attr("width", (item) => x(item.value) - margin.left)
+    .attr("height", y.bandwidth())
+    .attr("rx", 4)
+    .attr("fill", (item) => color(item.category))
+    .append("title")
+    .text((item) => `${item.category}: ${formatNumber(item.value)}`);
+  svg.selectAll("text.category-value").data(rows).join("text")
+    .attr("class", styles.d3BarValue)
+    .attr("x", (item) => x(item.value) + 7)
+    .attr("y", (item) => y(item.category) + y.bandwidth() / 2 + 4)
+    .text((item) => formatNumber(item.value));
+}
+
 function renderHeatmap(svg, data, title) {
   const width = 720;
   const height = 330;
@@ -364,6 +399,8 @@ export default function D3Chart({ data, chartType = "line", title, goal = 100000
       renderHeatmap(svg, rows, title);
     } else if (chartType === "scatter") {
       renderScatter(svg, rows, title);
+    } else if (chartType === "category-bar") {
+      renderCategoryBar(svg, rows, title);
     } else if (chartType === "histogram") {
       renderHistogram(svg, rows, title);
     } else {

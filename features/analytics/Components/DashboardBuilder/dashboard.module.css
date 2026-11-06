@@ -384,6 +384,11 @@
 .d3AxisTitle {
   font-size: 10px;
 }
+.d3BarValue {
+  fill: #59667b;
+  font-size: 10px;
+  font-weight: 600;
+}
 .widgetStatus,
 .empty {
   display: grid;

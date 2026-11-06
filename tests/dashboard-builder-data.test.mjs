@@ -4,6 +4,7 @@ import {
   aggregateMediaSources,
   buildDailySeries,
   buildSourceEfficiency,
+  buildSourceTotals,
   filterDashboardRows,
   getMetricTotal,
   getSourceMetric,
@@ -76,6 +77,16 @@ test("source efficiency data exposes spend as x and installs as y", () => {
     spend: 120,
     installs: 30,
   }]);
+});
+
+test("source totals provide media-source categories for bar and pie charts", () => {
+  const rows = [reportRow("2026-11-06", { Facebook_cost: 120, Facebook_users: 30 })];
+  assert.deepEqual(buildSourceTotals(rows, 7, "spend", now), [{ category: "FB", value: 120 }]);
+  assert.deepEqual(buildSourceTotals(rows, 7, "users", now), [{ category: "FB", value: 30 }]);
+  const installsByDay = buildDailySeries(rows, "source-installs", 7, now);
+  assert.deepEqual(installsByDay.filter(({ category, value }) => category === "FB" && value), [
+    { date: new Date(2026, 10, 6), value: 30, category: "FB" },
+  ]);
 });
 
 test("daily series are grouped by day and include per-source spend series", () => {
