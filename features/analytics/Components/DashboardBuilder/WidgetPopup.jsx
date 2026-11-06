@@ -23,7 +23,11 @@ export default function WidgetPopup({ widget, rows, onClose }) {
       </DialogTitle>
       <DialogContent dividers sx={{ minHeight: 0 }}>
         <div className={styles.popupContent}>
-          <WidgetRenderer widget={widget} rows={rows} days={widget?.days || 30} />
+          <WidgetRenderer
+            widget={widget}
+            rows={rows}
+            days={widget?.days || 30}
+          />
         </div>
       </DialogContent>
     </Dialog>
