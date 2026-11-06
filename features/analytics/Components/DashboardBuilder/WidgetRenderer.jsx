@@ -2,11 +2,12 @@
 
 import React, { useMemo, useState } from "react";
 import LineChart from "../Charts/LineChart";
+import { getReportDay } from "../Charts/chartDates";
 import {
-  aggregateMediaSources,
   buildDailySeries,
   filterDashboardRows,
   getMetricTotal,
+  getSourceMetric,
   MEDIA_SOURCES,
 } from "./dashboard-data";
 import styles from "./dashboard.module.css";
@@ -46,28 +47,38 @@ function MetricWidget({ widget, rows, days }) {
 function MediaSourcesTable({ rows, days }) {
   const [sourceFilter, setSourceFilter] = useState("all");
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState({ key: "spend", direction: "desc" });
-  const sources = useMemo(() => aggregateMediaSources(rows, days), [rows, days]);
   const visibleSources = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
-    return sources
+    return MEDIA_SOURCES
       .filter((source) => sourceFilter === "all" || source.label === sourceFilter)
-      .filter((source) => !normalizedSearch || `${source.name} ${source.label}`.toLowerCase().includes(normalizedSearch))
-      .sort((first, second) => {
-        const multiplier = sort.direction === "asc" ? 1 : -1;
-        const a = first[sort.key];
-        const b = second[sort.key];
-        return typeof a === "number" && typeof b === "number"
-          ? (a - b) * multiplier
-          : String(a).localeCompare(String(b)) * multiplier;
-      });
-  }, [sources, sourceFilter, search, sort]);
+      .filter((source) => !normalizedSearch || `${source.name} ${source.label}`.toLowerCase().includes(normalizedSearch));
+  }, [sourceFilter, search]);
+  const visibleRows = useMemo(
+    () => filterDashboardRows(rows, days)
+      .map((row, index) => ({ row, index, timestamp: getReportDay(row?.Install_time) }))
+      .sort((first, second) => (second.timestamp ?? 0) - (first.timestamp ?? 0)),
+    [rows, days],
+  );
 
-  const changeSort = (key) => {
-    setSort((current) => ({
-      key,
-      direction: current.key === key && current.direction === "desc" ? "asc" : "desc",
-    }));
+  const columns = [
+    { key: "spend", label: "spend", field: (source) => `${source.prefix}_cost`, integer: true },
+    { key: "users", label: "users", field: (source) => `${source.prefix}_users`, integer: true },
+    { key: "cpi", label: "cpi", field: (source) => `${source.prefix}_cpi`, decimals: 2 },
+    { key: "r0", label: "RO_D0", field: (source) => source.r0, integer: true },
+    { key: "r7", label: "RO_D7", field: (source) => source.r7, integer: true },
+    { key: "ret1", label: "Ret_D1", field: (source) => source.ret1, integer: true },
+    { key: "ret7", label: "Ret_D7", field: (source) => source.ret7, integer: true },
+  ];
+
+  const renderMetric = (row, source, column) => {
+    const raw = column.field(source);
+    const value = typeof raw === "string" || Array.isArray(raw)
+      ? getSourceMetric(row, raw)
+      : Number(row?.[raw]);
+    if (!Number.isFinite(value)) return "0";
+    return column.decimals
+      ? value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      : Math.round(value).toLocaleString("en-US");
   };
 
   return (
@@ -78,7 +89,7 @@ function MediaSourcesTable({ rows, days }) {
           <select value={sourceFilter} onChange={(event) => setSourceFilter(event.target.value)}>
             <option value="all">All sources</option>
             {MEDIA_SOURCES.map((source) => (
-              <option key={source.label} value={source.label}>{source.name}</option>
+              <option key={source.label} value={source.label}>{source.label} · {source.name}</option>
             ))}
           </select>
         </label>
@@ -96,28 +107,44 @@ function MediaSourcesTable({ rows, days }) {
         <table className={styles.sourceTable}>
           <thead>
             <tr>
-              <th scope="col"><button onClick={() => changeSort("name")}>Media source</button></th>
-              <th scope="col"><button onClick={() => changeSort("installs")}>Installs</button></th>
-              <th scope="col"><button onClick={() => changeSort("spend")}>Spend</button></th>
-              <th scope="col"><button onClick={() => changeSort("cpi")}>CPI</button></th>
+              <th className={styles.dateHeader} scope="col" rowSpan={2}>Date</th>
+              {visibleSources.map((source) => (
+                <th className={styles.sourceGroupHeader} key={source.label} scope="colgroup" colSpan={columns.length}>{source.label}</th>
+              ))}
+            </tr>
+            <tr>
+              {visibleSources.flatMap((source) => columns.map((column, index) => (
+                <th
+                  className={`${styles.metricHeader} ${index === columns.length - 1 ? styles.sourceEnd : ""}`}
+                  key={`${source.label}-${column.key}`}
+                  scope="col"
+                >
+                  {column.label}
+                </th>
+              )))}
             </tr>
           </thead>
           <tbody>
-            {visibleSources.map((source) => (
-              <tr key={source.label}>
-                <th scope="row"><span className={styles.sourceBadge}>{source.label}</span>{source.name}</th>
-                <td>{formatValue(source.installs)}</td>
-                <td>{formatValue(source.spend, true)}</td>
-                <td>{formatValue(source.cpi, true)}</td>
+            {visibleRows.map(({ row, index, timestamp }) => (
+              <tr key={`${row.game || "overall"}-${timestamp || "undated"}-${index}`}>
+                <th className={styles.dateCell} scope="row">{timestamp == null ? "—" : new Date(timestamp).toLocaleDateString("en-US")}</th>
+                {visibleSources.flatMap((source) => columns.map((column, columnIndex) => (
+                  <td
+                    className={`${styles.sourceMetricCell} ${columnIndex === columns.length - 1 ? styles.sourceEnd : ""}`}
+                    key={`${source.label}-${column.key}`}
+                  >
+                    {renderMetric(row, source, column)}
+                  </td>
+                )))}
               </tr>
             ))}
-            {!visibleSources.length && (
-              <tr><td className={styles.noTableData} colSpan={4}>No media-source rows match the current filters.</td></tr>
+            {(!visibleSources.length || !visibleRows.length) && (
+              <tr><td className={styles.noTableData} colSpan={1 + visibleSources.length * columns.length}>No report rows match the current filters.</td></tr>
             )}
           </tbody>
         </table>
       </div>
-      <small className={styles.tableCaption}>{visibleSources.length} sources · aggregated from the selected report rows</small>
+      <small className={styles.tableCaption}>{visibleRows.length.toLocaleString("en-US")} report rows · {visibleSources.length} media sources · selected {days}-day period</small>
     </div>
   );
 }

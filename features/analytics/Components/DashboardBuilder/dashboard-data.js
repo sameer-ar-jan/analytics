@@ -1,18 +1,18 @@
 import { getReportDay } from "../Charts/chartDates.js";
 
 export const MEDIA_SOURCES = [
-  { name: "Facebook", label: "FB", prefix: "Facebook" },
-  { name: "Google Ads", label: "Ggl", prefix: "googleadwords" },
-  { name: "IronSource", label: "IS", prefix: "ironsource" },
-  { name: "AppLovin", label: "AL", prefix: "applovin" },
-  { name: "Unity Ads", label: "UA", prefix: "unityads" },
-  { name: "Tapjoy", label: "TJ", prefix: "tapjoy" },
-  { name: "Xiaomi", label: "Xiaomi", prefix: "xiaomiglobal" },
-  { name: "Swagbucks", label: "BDG", prefix: "swagbucks" },
-  { name: "Mintegral", label: "MTG", prefix: "mintegral" },
-  { name: "AdColony", label: "AC", prefix: "adcolony" },
-  { name: "Chartboost", label: "CB", prefix: "chartboosts2s" },
-  { name: "SponsorPay", label: "SP", prefix: "sponsorpay" },
+  { name: "Facebook", label: "FB", prefix: "Facebook", r0: "fb_r0", r7: "fb_r7", ret1: "facebook_ret1", ret7: "facebook_ret7" },
+  { name: "Google Ads", label: "Ggl", prefix: "googleadwords", r0: "google_r0", r7: "google_r7", ret1: "googleadwords_ret1", ret7: ["googleadwords_ret7", "googleadwords__ret7"] },
+  { name: "IronSource", label: "IS", prefix: "ironsource", r0: "IS_r0", r7: "IS_r7", ret1: "ironsource_ret1", ret7: "ironsource_ret7" },
+  { name: "AppLovin", label: "AL", prefix: "applovin", r0: "AL_r0", r7: "AL_r7", ret1: "applovin_ret1", ret7: "applovin_ret7" },
+  { name: "Unity Ads", label: "UA", prefix: "unityads", r0: "UA_r0", r7: "UA_r7", ret1: "unityads_ret1", ret7: "unityads_ret7" },
+  { name: "Tapjoy", label: "TJ", prefix: "tapjoy", r0: "TJ_r0", r7: "TJ_r7", ret1: "tapjoy_ret1", ret7: "tapjoy_ret7" },
+  { name: "Adjoe", label: "Adjoe", prefix: "xiaomiglobal", r0: "X_r0", r7: "X_r7", ret1: "xiaomi_ret1", ret7: "xiaomi_ret7" },
+  { name: "Swagbucks", label: "Swagbucks", prefix: "swagbucks", r0: "SB_r0", r7: "SB_r7", ret1: "swagbucks_ret1", ret7: "swagbucks_ret7" },
+  { name: "Mintegral", label: "MTG", prefix: "mintegral", r0: "Mint_r0", r7: "Mint_r7", ret1: "Mintint_ret1", ret7: "Mintint_ret7" },
+  { name: "Aura", label: "Aura", prefix: "aura", r0: "aura_r0", r7: "aura_r7", ret1: "aura_ret1", ret7: "aura_ret7" },
+  { name: "Liftoff", label: "litoff", prefix: "litoff", r0: "LO_r0", r7: "LO_r7", ret1: "LiftOff_ret1", ret7: "LiftOff_ret7" },
+  { name: "SponsorPay", label: "SP", prefix: "sponsorpay", r0: "SP_r0", r7: "SP_r7", ret1: "sponserpayretention_ret1", ret7: "sponserpayretention_ret7" },
 ];
 
 export const DASHBOARD_GAMES = [
@@ -39,6 +39,15 @@ const numberOrZero = (value) => {
   const number = Number(value);
   return Number.isFinite(number) ? number : 0;
 };
+
+export function getSourceMetric(row, field) {
+  const fields = Array.isArray(field) ? field : [field];
+  for (const key of fields) {
+    const value = Number(row?.[key]);
+    if (row?.[key] != null && row[key] !== "" && Number.isFinite(value)) return value;
+  }
+  return 0;
+}
 
 const rowDate = (row) => getReportDay(row?.Install_time);
 

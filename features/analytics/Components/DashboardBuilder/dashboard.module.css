@@ -330,34 +330,75 @@
   border-radius: 8px;
 }
 .sourceTable {
-  width: 100%;
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
-  text-align: left;
+  table-layout: auto;
+  text-align: right;
   font-size: 12px;
 }
 .sourceTable th,
 .sourceTable td {
-  padding: 9px 11px;
-  border-bottom: 1px solid #edf0f5;
+  min-width: 74px;
+  padding: 5px 9px;
+  border: 1px solid #d5d5d5;
   white-space: nowrap;
 }
 .sourceTable thead th {
   position: sticky;
   top: 0;
-  z-index: 1;
-  background: #f8f9fc;
-  color: #68748a;
-  font-size: 10px;
+  z-index: 3;
+  background: #f3f3f3;
+  color: #bfc0c2;
+  font-size: 14px;
   font-weight: 700;
-  text-transform: uppercase;
+}
+.sourceTable thead .sourceGroupHeader {
+  min-width: 0;
+  height: 34px;
+  background: #f3f3f3;
+  color: #171717;
+  text-align: left;
+}
+.sourceTable thead .metricHeader {
+  top: 34px;
+  z-index: 2;
+  min-width: 70px;
+  height: 44px;
+  font-weight: 500;
+  text-align: center;
+}
+.sourceTable .dateHeader,
+.sourceTable .dateCell {
+  position: sticky;
+  left: 0;
+  z-index: 4;
+  min-width: 112px;
+  background: #f3f3f3;
+  text-align: left;
+}
+.sourceTable thead .dateHeader {
+  z-index: 5;
+  color: #171717;
+}
+.sourceTable .sourceEnd {
+  border-right: 5px solid white;
 }
 .sourceTable tbody th {
-  color: #263149;
+  color: #262626;
   font-weight: 600;
 }
 .sourceTable tbody td {
-  color: #4a5670;
+  background: #f3f3f3;
+  color: #171717;
   font-variant-numeric: tabular-nums;
+}
+.sourceTable .sourceMetricCell {
+  min-width: 74px;
+  color: #f28a00;
+}
+.sourceTable tbody tr:nth-child(even) .sourceMetricCell {
+  color: #202020;
 }
 .sourceTable tr:last-child th,
 .sourceTable tr:last-child td {

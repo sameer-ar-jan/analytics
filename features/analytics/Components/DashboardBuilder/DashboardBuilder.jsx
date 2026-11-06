@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import ReactGridLayout, {
   useContainerWidth,
@@ -8,7 +8,6 @@ import ReactGridLayout, {
 } from "react-grid-layout";
 import WidgetRenderer from "./WidgetRenderer";
 import WidgetPopup from "./WidgetPopup";
-import axiosInstance from "../../api/axios";
 import { DASHBOARD_GAMES } from "./dashboard-data";
 import styles from "./dashboard.module.css";
 import "react-grid-layout/css/styles.css";
@@ -60,23 +59,20 @@ const isValidSavedLayout = (saved) =>
     [item.x, item.y, item.w, item.h].every(Number.isFinite),
   );
 
-export default function DashboardBuilder({ initialData = { rows: [] } }) {
+/** @param {{ initialData?: { rows: object[], games: Record<string, object[]> } }} props */
+export default function DashboardBuilder({ initialData = { rows: [], games: {} } }) {
   const [widgets, setWidgets] = useState(initialWidgets);
   const [layout, setLayout] = useState(initialLayout);
   const [selectedWidget, setSelectedWidget] = useState(null);
   const [loaded, setLoaded] = useState(false);
   const [days, setDays] = useState(30);
   const [scope, setScope] = useState("overall");
-  const [gameRows, setGameRows] = useState([]);
-  const [dataLoading, setDataLoading] = useState(false);
-  const [dataError, setDataError] = useState("");
   const [storageError, setStorageError] = useState("");
   const { width, containerRef, mounted } = useContainerWidth();
-  const rows = scope === "overall" ? (Array.isArray(initialData.rows) ? initialData.rows : []) : gameRows;
-  const selectedGameName = useMemo(
-    () => DASHBOARD_GAMES.find((game) => game.id === scope)?.name || "",
-    [scope],
-  );
+  const rows = scope === "overall"
+    ? (Array.isArray(initialData.rows) ? initialData.rows : [])
+    : (Array.isArray(initialData.games?.[scope]) ? initialData.games[scope] : []);
+  const selectedGameName = DASHBOARD_GAMES.find((game) => game.id === scope)?.name || "";
 
   useEffect(() => {
     try {
@@ -102,26 +98,6 @@ export default function DashboardBuilder({ initialData = { rows: [] } }) {
       setStorageError("Layout changes cannot be saved in this browser.");
     }
   }, [widgets, layout, loaded]);
-
-  useEffect(() => {
-    if (scope === "overall") return undefined;
-
-    const controller = new AbortController();
-    axiosInstance
-      .get(`stackoverflow/AI/${scope}`, { signal: controller.signal })
-      .then((response) => {
-        setGameRows(Array.isArray(response.data) ? response.data : []);
-      })
-      .catch((error) => {
-        if (error.code === "ERR_CANCELED") return;
-        setGameRows([]);
-        setDataError("Unable to load this game's report data. Please try again.");
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setDataLoading(false);
-      });
-    return () => controller.abort();
-  }, [scope, initialData.rows]);
 
   const addWidget = (type) => {
     const definition = WIDGET_BY_TYPE[type];
@@ -178,12 +154,7 @@ export default function DashboardBuilder({ initialData = { rows: [] } }) {
           <div className={styles.toolbar}>
             <label>
               <span>Data scope</span>
-              <select aria-label="Data scope" value={scope} onChange={(event) => {
-                const nextScope = event.target.value;
-                setScope(nextScope);
-                setDataError("");
-                setDataLoading(nextScope !== "overall");
-              }}>
+              <select aria-label="Data scope" value={scope} onChange={(event) => setScope(event.target.value)}>
                 <option value="overall">Overall · All games</option>
                 {DASHBOARD_GAMES.map((game) => <option key={game.id} value={game.id}>{game.name}</option>)}
               </select>
@@ -200,7 +171,7 @@ export default function DashboardBuilder({ initialData = { rows: [] } }) {
         </header>
 
         <div className={styles.builderBar}>
-          <span><i />{dataLoading ? "Loading report data…" : `Showing ${scope === "overall" ? "overall data" : selectedGameName} · ${rows.length.toLocaleString("en-US")} report rows`}<span className={styles.hint}> · Drag widgets to arrange and resize them</span></span>
+          <span><i />{`Showing ${scope === "overall" ? "overall data" : selectedGameName} · ${rows.length.toLocaleString("en-US")} report rows loaded`}<span className={styles.hint}> · Drag widgets to arrange and resize them</span></span>
           <div>
             <button type="button" onClick={() => { setWidgets(initialWidgets); setLayout(initialLayout); }}>Reset layout</button>
             <label className={styles.addControl}>
@@ -212,7 +183,7 @@ export default function DashboardBuilder({ initialData = { rows: [] } }) {
             </label>
           </div>
         </div>
-        {(storageError || dataError) && <p className={styles.notice} role="status">{dataError || storageError}</p>}
+        {storageError && <p className={styles.notice} role="status">{storageError}</p>}
 
         <div ref={containerRef} className={styles.grid}>
           {mounted && loaded ? (
@@ -238,7 +209,7 @@ export default function DashboardBuilder({ initialData = { rows: [] } }) {
                     </details>
                   </div>
                   <div className={styles.widgetContent}>
-                    <WidgetRenderer widget={widget} rows={rows} days={days} loading={dataLoading} />
+                    <WidgetRenderer widget={widget} rows={rows} days={days} />
                   </div>
                 </article>
               ))}
@@ -246,7 +217,7 @@ export default function DashboardBuilder({ initialData = { rows: [] } }) {
           ) : <p className={styles.widgetStatus} role="status">Loading dashboard…</p>}
           {loaded && widgets.length === 0 && <p className={styles.empty}>Your canvas is ready. Add a widget to start building.</p>}
         </div>
-        <footer className={styles.footer}>Widgets use live report data from the selected overall or individual-game report.</footer>
+        <footer className={styles.footer}>Overall and individual-game reports are preloaded when this page opens.</footer>
       </section>
 
       {selectedWidget && (

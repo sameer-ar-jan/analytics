@@ -5,6 +5,7 @@ import {
   buildDailySeries,
   filterDashboardRows,
   getMetricTotal,
+  getSourceMetric,
   getTotalSpend,
 } from "../features/analytics/Components/DashboardBuilder/dashboard-data.js";
 
@@ -52,6 +53,15 @@ test("media-source table aggregates installs, spend, and weighted CPI", () => {
   assert.equal(result[0].installs, 15);
   assert.equal(result[0].spend, 90);
   assert.equal(result[0].cpi, 6);
+});
+
+test("media-source ROAS and retention fields support report aliases", () => {
+  const row = { IS_r0: 3, IS_r7: 7, ironsource_ret1: 38, ironsource_ret7: 16, googleadwords__ret7: 9 };
+  assert.equal(getSourceMetric(row, "IS_r0"), 3);
+  assert.equal(getSourceMetric(row, "IS_r7"), 7);
+  assert.equal(getSourceMetric(row, "ironsource_ret1"), 38);
+  assert.equal(getSourceMetric(row, "ironsource_ret7"), 16);
+  assert.equal(getSourceMetric(row, ["googleadwords_ret7", "googleadwords__ret7"]), 9);
 });
 
 test("daily series are grouped by day and include per-source spend series", () => {
