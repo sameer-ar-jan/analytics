@@ -13,7 +13,7 @@ export default async function OverallPage() {
   ]);
   return (
     <>
-      <ReportNotice failed={failed} />
+      {/* <ReportNotice failed={failed} /> */}
       <Overall initialData={{ daily: data[0], monthly: data[1] }} />
     </>
   );

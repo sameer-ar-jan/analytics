@@ -22,7 +22,7 @@ export default async function DashboardBuilderPage() {
 
   return (
     <main>
-      <ReportNotice failed={failed} />
+      {/* <ReportNotice failed={failed} /> */}
       <DashboardBuilder
         initialData={{
           rows: Array.isArray(data[0]) ? data[0] : [],

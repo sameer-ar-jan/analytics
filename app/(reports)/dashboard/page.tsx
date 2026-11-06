@@ -20,7 +20,7 @@ export default async function DashboardPage({
   ]);
   return (
     <>
-      <ReportNotice failed={failed} />
+      {/* <ReportNotice failed={failed} /> */}
       <Dashboard
         key={`${game}:${query}`}
         initialData={{ game, query, daily: data[0], monthly: data[1] }}

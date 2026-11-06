@@ -10,7 +10,7 @@ export default async function RoasPage() {
   const { data, failed } = await loadReport([["roas_2y", "I", "2248"]]);
   return (
     <>
-      <ReportNotice failed={failed} />
+      {/* <ReportNotice failed={failed} /> */}
       <Roas2y initialRows={data[0]} />
     </>
   );
