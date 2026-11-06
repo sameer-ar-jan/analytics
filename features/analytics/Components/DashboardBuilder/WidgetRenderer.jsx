@@ -85,33 +85,48 @@ function MediaSourcesTable({ rows, days }) {
 
   return (
     <div className={styles.tableWidget}>
-      <div className={styles.tableFilters}>
-        <label>
-          <span>Media source</span>
-          <select value={sourceFilter} onChange={(event) => setSourceFilter(event.target.value)}>
-            <option value="all">All sources</option>
-            {MEDIA_SOURCES.map((source) => (
-              <option key={source.label} value={source.label}>{source.label} · {source.name}</option>
-            ))}
-          </select>
-        </label>
-        <label className={styles.searchFilter}>
-          <span>Search sources</span>
+      <div className={styles.tableToolbar}>
+        <div className={styles.tableHeading}>
+          <strong>Media source performance</strong>
+          <span>Spend, acquisition, ROAS, and retention</span>
+        </div>
+        <div className={styles.tableFilters}>
+          <label className={styles.sourceFilter}>
+            <span>Media source</span>
+            <select value={sourceFilter} onChange={(event) => setSourceFilter(event.target.value)}>
+              <option value="all">All sources</option>
+              {MEDIA_SOURCES.map((source) => (
+                <option key={source.label} value={source.label}>{source.label} · {source.name}</option>
+              ))}
+            </select>
+          </label>
+          <label className={`${styles.searchFilter} ${styles.searchLabel}`}>
+            <span className={styles.visuallyHidden}>Search media sources</span>
           <input
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search by name"
+              placeholder="Search media sources"
+              aria-label="Search media sources"
           />
-        </label>
+          </label>
+        </div>
       </div>
       <div className={styles.tableScroll}>
         <table className={styles.sourceTable}>
+          <caption className={styles.visuallyHidden}>Media-source daily spend, users, CPI, ROAS and retention for the selected date range.</caption>
           <thead>
             <tr>
-              <th className={styles.dateHeader} scope="col" rowSpan={2}>Date</th>
+              <th className={styles.dateHeader} scope="col" rowSpan={2}>
+                <span>Date</span>
+                <small>Daily</small>
+              </th>
               {visibleSources.map((source) => (
-                <th className={styles.sourceGroupHeader} key={source.label} scope="colgroup" colSpan={columns.length}>{source.label}</th>
+                <th className={styles.sourceGroupHeader} key={source.label} scope="colgroup" colSpan={columns.length} title={source.name}>
+                  <span className={styles.sourceIndicator} aria-hidden="true">{source.label.slice(0, 1)}</span>
+                  <span>{source.name}</span>
+                  <small>{source.label}</small>
+                </th>
               ))}
             </tr>
             <tr>
@@ -146,7 +161,10 @@ function MediaSourcesTable({ rows, days }) {
           </tbody>
         </table>
       </div>
-      <small className={styles.tableCaption}>{visibleRows.length.toLocaleString("en-US")} report rows · {visibleSources.length} media sources · selected {days}-day period</small>
+      <div className={styles.tableFooter}>
+        <span>Showing <strong>{visibleRows.length.toLocaleString("en-US")}</strong> daily rows</span>
+        <span><strong>{visibleSources.length}</strong> media sources <i /> Last {days} days</span>
+      </div>
     </div>
   );
 }

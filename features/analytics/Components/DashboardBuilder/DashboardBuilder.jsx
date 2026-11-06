@@ -32,6 +32,7 @@ const WIDGET_DEFINITIONS = [
   { type: "d3-source-bar", title: "Spend by Source · D3 Bar", kind: "chart", metric: "source-spend", engine: "d3", chartType: "bar" },
   { type: "d3-source-stacked-bar", title: "Spend by Source · D3 Stacked Bar", kind: "chart", metric: "source-spend", engine: "d3", chartType: "stacked-bar" },
   { type: "d3-source-stacked-area", title: "Spend by Source · D3 Stacked Area", kind: "chart", metric: "source-spend", engine: "d3", chartType: "stacked-area" },
+  { type: "d3-source-pie", title: "Spend Share · D3 Pie", kind: "chart", metric: "source-spend", engine: "d3", chartType: "pie" },
   { type: "d3-source-donut", title: "Spend Share · D3 Donut", kind: "chart", metric: "source-spend", engine: "d3", chartType: "donut" },
   { type: "d3-source-treemap", title: "Spend Share · D3 Treemap", kind: "chart", metric: "source-spend", engine: "d3", chartType: "treemap" },
   { type: "d3-source-heatmap", title: "Daily Spend by Source · D3 Heatmap", kind: "chart", metric: "source-spend", engine: "d3", chartType: "heatmap" },

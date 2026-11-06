@@ -59,7 +59,7 @@ function renderGauge(svg, data, goal) {
   gauge.append("text").attr("class", styles.d3GaugeScale).attr("x", radius).attr("y", 19).attr("text-anchor", "end").text(formatNumber(target));
 }
 
-function renderDonut(svg, data, title) {
+function renderDonut(svg, data, title, chartType = "donut") {
   const width = 720;
   const height = 330;
   const totals = Array.from(d3.rollup(data, (items) => d3.sum(items, (item) => item.value), (item) => item.category), ([category, value]) => ({ category, value }))
@@ -71,7 +71,7 @@ function renderDonut(svg, data, title) {
   svg.append("text").attr("class", styles.d3ChartTitle).attr("x", 24).attr("y", 22).text(title || "Share by category");
   const group = svg.append("g").attr("transform", "translate(220,175)");
   const pie = d3.pie().sort(null).value((item) => item.value)(totals);
-  const arc = d3.arc().innerRadius(62).outerRadius(125).cornerRadius(3);
+  const arc = d3.arc().innerRadius(chartType === "pie" ? 0 : 62).outerRadius(125).cornerRadius(3);
   const color = d3.scaleOrdinal(totals.map((item) => item.category), COLORS);
   group.selectAll("path")
     .data(pie)
@@ -82,8 +82,10 @@ function renderDonut(svg, data, title) {
     .attr("stroke-width", 2)
     .append("title")
     .text((item) => `${item.data.category}: ${formatNumber(item.data.value)} (${(item.data.value / d3.sum(totals, (entry) => entry.value) * 100).toFixed(1)}%)`);
-  group.append("text").attr("class", styles.d3GaugeValue).attr("text-anchor", "middle").attr("y", -2).text(formatNumber(d3.sum(totals, (item) => item.value)));
-  group.append("text").attr("class", styles.d3GaugeCaption).attr("text-anchor", "middle").attr("y", 22).text("Total spend");
+  if (chartType === "donut") {
+    group.append("text").attr("class", styles.d3GaugeValue).attr("text-anchor", "middle").attr("y", -2).text(formatNumber(d3.sum(totals, (item) => item.value)));
+    group.append("text").attr("class", styles.d3GaugeCaption).attr("text-anchor", "middle").attr("y", 22).text("Total spend");
+  }
 
   const legend = svg.append("g").attr("transform", "translate(410,55)");
   totals.forEach((item, index) => {
@@ -354,8 +356,8 @@ export default function D3Chart({ data, chartType = "line", title, goal = 100000
 
     if (chartType === "gauge") {
       renderGauge(svg, rows, gaugeGoal);
-    } else if (chartType === "donut") {
-      renderDonut(svg, rows, title);
+    } else if (chartType === "pie" || chartType === "donut") {
+      renderDonut(svg, rows, title, chartType);
     } else if (chartType === "treemap") {
       renderTreemap(svg, rows, title);
     } else if (chartType === "heatmap") {
