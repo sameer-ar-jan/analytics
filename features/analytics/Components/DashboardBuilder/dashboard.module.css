@@ -284,6 +284,106 @@
   height: 100%;
   min-height: 150px;
 }
+.d3ChartContainer {
+  width: 100%;
+  height: 100%;
+  min-height: 190px;
+}
+.gaugeWidget {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 190px;
+  flex-direction: column;
+}
+.gaugeTarget {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #68748a;
+  font-size: 11px;
+}
+.gaugeTarget input {
+  width: 112px;
+  min-height: 28px;
+  padding: 4px 7px;
+  border: 1px solid #dce1ec;
+  border-radius: 6px;
+  color: #34415e;
+  font: inherit;
+}
+.gaugeWidget .d3Chart {
+  flex: 1;
+  min-height: 0;
+}
+.d3Chart {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 190px;
+  overflow: visible;
+  color: #647087;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+}
+.d3ChartTitle {
+  fill: #47536a;
+  font-size: 12px;
+  font-weight: 600;
+}
+.d3Grid :global(line) {
+  stroke: #e9edf4;
+}
+.d3Grid :global(text) {
+  fill: #7a8497;
+  font-size: 10px;
+}
+.d3Grid :global(path) {
+  display: none;
+}
+.d3InteractionOverlay {
+  pointer-events: all;
+}
+.d3Crosshair {
+  stroke: #66748b;
+  stroke-dasharray: 3 3;
+  stroke-width: 1;
+}
+.d3TooltipPanel {
+  fill: #fff;
+  stroke: #d7dce6;
+  stroke-width: 1;
+  filter: drop-shadow(0 3px 8px #17203324);
+}
+.d3TooltipDate {
+  fill: #38445b;
+  font-size: 11px;
+  font-weight: 700;
+}
+.d3TooltipValue {
+  font-size: 10px;
+  font-weight: 600;
+}
+.d3GaugeValue {
+  fill: #202b40;
+  font-size: 28px;
+  font-weight: 700;
+}
+.d3GaugeCaption,
+.d3GaugeScale,
+.d3LegendText,
+.d3TreemapLabel,
+.d3AxisTitle {
+  fill: #68748a;
+  font-size: 11px;
+}
+.d3TreemapLabel {
+  fill: white;
+  font-weight: 600;
+}
+.d3AxisTitle {
+  font-size: 10px;
+}
 .widgetStatus,
 .empty {
   display: grid;

@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   aggregateMediaSources,
   buildDailySeries,
+  buildSourceEfficiency,
   filterDashboardRows,
   getMetricTotal,
   getSourceMetric,
@@ -62,6 +63,19 @@ test("media-source ROAS and retention fields support report aliases", () => {
   assert.equal(getSourceMetric(row, "ironsource_ret1"), 38);
   assert.equal(getSourceMetric(row, "ironsource_ret7"), 16);
   assert.equal(getSourceMetric(row, ["googleadwords_ret7", "googleadwords__ret7"]), 9);
+});
+
+test("source efficiency data exposes spend as x and installs as y", () => {
+  const result = buildSourceEfficiency([
+    reportRow("2026-11-06", { Facebook_cost: 120, Facebook_users: 30 }),
+  ], 7, now);
+  assert.deepEqual(result, [{
+    category: "FB",
+    x: 120,
+    y: 30,
+    spend: 120,
+    installs: 30,
+  }]);
 });
 
 test("daily series are grouped by day and include per-source spend series", () => {

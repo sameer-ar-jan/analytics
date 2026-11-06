@@ -25,6 +25,22 @@ const WIDGET_DEFINITIONS = [
   { type: "chart-revenue", title: "Ad Revenue Over Time", kind: "chart", metric: "revenue" },
   { type: "chart-spend", title: "Media Spend Over Time", kind: "chart", metric: "spend" },
   { type: "chart-source-spend", title: "Spend by Media Source", kind: "chart", metric: "source-spend" },
+  { type: "d3-users-line", title: "New Users · D3 Line", kind: "chart", metric: "users", engine: "d3", chartType: "line" },
+  { type: "d3-revenue-area", title: "Ad Revenue · D3 Area", kind: "chart", metric: "revenue", engine: "d3", chartType: "area" },
+  { type: "d3-spend-area", title: "Media Spend · D3 Area", kind: "chart", metric: "spend", engine: "d3", chartType: "area" },
+  { type: "d3-source-line", title: "Spend by Source · D3 Line", kind: "chart", metric: "source-spend", engine: "d3", chartType: "line" },
+  { type: "d3-source-bar", title: "Spend by Source · D3 Bar", kind: "chart", metric: "source-spend", engine: "d3", chartType: "bar" },
+  { type: "d3-source-stacked-bar", title: "Spend by Source · D3 Stacked Bar", kind: "chart", metric: "source-spend", engine: "d3", chartType: "stacked-bar" },
+  { type: "d3-source-stacked-area", title: "Spend by Source · D3 Stacked Area", kind: "chart", metric: "source-spend", engine: "d3", chartType: "stacked-area" },
+  { type: "d3-source-donut", title: "Spend Share · D3 Donut", kind: "chart", metric: "source-spend", engine: "d3", chartType: "donut" },
+  { type: "d3-source-treemap", title: "Spend Share · D3 Treemap", kind: "chart", metric: "source-spend", engine: "d3", chartType: "treemap" },
+  { type: "d3-source-heatmap", title: "Daily Spend by Source · D3 Heatmap", kind: "chart", metric: "source-spend", engine: "d3", chartType: "heatmap" },
+  { type: "d3-source-scatter", title: "Spend vs Installs · D3 Scatter", kind: "chart", metric: "source-efficiency", engine: "d3", chartType: "scatter" },
+  { type: "d3-users-histogram", title: "Daily Users Distribution · D3 Histogram", kind: "chart", metric: "users", engine: "d3", chartType: "histogram" },
+  { type: "d3-users-gauge", title: "New Users Goal · D3 Speedometer", kind: "chart", metric: "users", engine: "d3", chartType: "gauge", goal: 100000 },
+  { type: "d3-revenue-gauge", title: "Revenue Goal · D3 Speedometer", kind: "chart", metric: "revenue", engine: "d3", chartType: "gauge", goal: 100000 },
+  { type: "d3-dau-gauge", title: "DAU Goal · D3 Speedometer", kind: "chart", metric: "dau", engine: "d3", chartType: "gauge", goal: 50000 },
+  { type: "d3-spend-gauge", title: "Spend Goal · D3 Speedometer", kind: "chart", metric: "spend", engine: "d3", chartType: "gauge", goal: 50000 },
   { type: "media-table", title: "Media Source Performance", kind: "table" },
 ];
 const WIDGET_BY_TYPE = Object.fromEntries(WIDGET_DEFINITIONS.map((item) => [item.type, item]));
@@ -32,12 +48,14 @@ const initialWidgets = WIDGET_DEFINITIONS.map((definition) => ({
   id: `${definition.type}-default`,
   ...definition,
 }));
+const chartCount = WIDGET_DEFINITIONS.filter((definition) => definition.kind === "chart").length;
+const tableY = 8 + Math.ceil(chartCount / 2) * 10;
 const initialLayout = initialWidgets.map((widget, index) => {
   if (widget.kind === "metric") {
     return { i: widget.id, x: (index % 3) * 4, y: Math.floor(index / 3) * 4, w: 4, h: 4, minW: 3, minH: 3 };
   }
   if (widget.kind === "table") {
-    return { i: widget.id, x: 0, y: 38, w: 12, h: 13, minW: 6, minH: 8 };
+    return { i: widget.id, x: 0, y: tableY, w: 12, h: 13, minW: 6, minH: 8 };
   }
   const chartIndex = index - 5;
   return { i: widget.id, x: (chartIndex % 2) * 6, y: 8 + Math.floor(chartIndex / 2) * 10, w: 6, h: 10, minW: 4, minH: 7 };

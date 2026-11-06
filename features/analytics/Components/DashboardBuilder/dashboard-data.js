@@ -166,3 +166,15 @@ export function aggregateMediaSources(rows, days = 30, now = new Date()) {
     }))
     .sort((first, second) => second.spend - first.spend);
 }
+
+export function buildSourceEfficiency(rows, days = 30, now = new Date()) {
+  return aggregateMediaSources(rows, days, now)
+    .filter((source) => source.spend || source.installs)
+    .map((source) => ({
+      category: source.label,
+      x: source.spend,
+      y: source.installs,
+      spend: source.spend,
+      installs: source.installs,
+    }));
+}

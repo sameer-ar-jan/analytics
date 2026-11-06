@@ -3,8 +3,10 @@
 import React, { useMemo, useState } from "react";
 import LineChart from "../Charts/LineChart";
 import { getReportDay } from "../Charts/chartDates";
+import D3Chart from "./D3Chart";
 import {
   buildDailySeries,
+  buildSourceEfficiency,
   filterDashboardRows,
   getMetricTotal,
   getSourceMetric,
@@ -151,7 +153,11 @@ function MediaSourcesTable({ rows, days }) {
 
 export default function WidgetRenderer({ widget, rows = [], days = 30, loading = false }) {
   const chartData = useMemo(
-    () => widget?.kind === "chart" ? buildDailySeries(rows, widget.metric, days) : [],
+    () => {
+      if (widget?.kind !== "chart") return [];
+      if (widget.metric === "source-efficiency") return buildSourceEfficiency(rows, days);
+      return buildDailySeries(rows, widget.metric, days);
+    },
     [widget, rows, days],
   );
   const end = new Date();
@@ -171,7 +177,11 @@ export default function WidgetRenderer({ widget, rows = [], days = 30, loading =
 
   return (
     <div className={styles.chartWidget}>
-      <LineChart data={chartData} xAxisRange={{ start, end }} />
+      {widget.engine === "d3" ? (
+        <D3Chart data={chartData} chartType={widget.chartType} title={widget.title} goal={widget.goal} />
+      ) : (
+        <LineChart data={chartData} xAxisRange={{ start, end }} />
+      )}
     </div>
   );
 }
