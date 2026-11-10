@@ -4,8 +4,8 @@
   border-spacing: 0;
   border: 1px solid #d3d3d3;
 }
-.root,
-.root * {
+.styles,
+.styles * {
   font-family: var(--app-font-family) !important;
 }
 .styles {
