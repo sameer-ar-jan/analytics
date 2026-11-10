@@ -413,6 +413,7 @@
   flex-direction: column;
   gap: 10px;
   color: #202a3b;
+  font-family: var(--app-font-family);
 }
 .tableToolbar {
   display: flex;
@@ -458,6 +459,7 @@
   border-radius: 6px;
   background-color: #fff;
   color: #303b50;
+  font-family: var(--app-font-family);
   font-size: 11px;
 }
 .tableFilters select:focus,
@@ -485,6 +487,7 @@
   border-collapse: collapse;
   table-layout: auto;
   text-align: right;
+  font-family: var(--app-font-family);
   font-size: 11px;
 }
 .sourceTable th,
