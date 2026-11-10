@@ -83,8 +83,8 @@ test("native routes, session protection, and server analytics adapter", { timeou
   const builder = await get("/dashboardbuilder", headers);
   const builderBody = await builder.text();
   assert.equal(builder.status, 200);
-  assert.ok(builderBody.includes("Custom Analytics Dashboard"));
-  assert.ok(builderBody.includes("Back to analytics"));
+  assert.ok(builderBody.includes("Dashboard Builder"));
+  assert.ok(builderBody.includes("Arrange report metrics"));
   assert.ok(!builderBody.includes('"digest":"') && !builderBody.includes("NEXT_REDIRECT"));
   assert.equal(upstreamRequests.length, requestsBeforeBuilder, "builder must not fetch unrelated reports");
   const legacyBuilder = await get("/DashboardBuilder");

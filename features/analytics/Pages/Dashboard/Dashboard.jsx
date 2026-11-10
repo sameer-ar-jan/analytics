@@ -17,7 +17,9 @@ import "react-date-range/dist/theme/default.css";
 import axiosInstance, {
   getCachedResponse,
   hasCachedResponse,
+  seedGetResponseCache,
 } from "../../api/axios";
+import { preloadAnalytics } from "../../api/preload";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import Popover from "@mui/material/Popover";
 import Selector from "../../Components/Selector/Selector.js";
@@ -364,6 +366,23 @@ export default function Dashboard({ initialData = null }) {
     getTopQuestions1(queryValue + "MA", game1);
   };
   const [signal, setSignal] = useState("false");
+
+  useEffect(() => {
+    if (initialData?.daily) {
+      seedGetResponseCache(
+        `stackoverflow/${initialData.query}/${initialData.game}`,
+        initialData.daily,
+      );
+    }
+    if (initialData?.monthly) {
+      seedGetResponseCache(
+        `month/${initialData.query}MA/${initialData.game}`,
+        initialData.monthly,
+      );
+    }
+    return preloadAnalytics({ query, game: game1 });
+  }, [initialData, query, game1]);
+
   const handleIdChange = (id) => {
     setSignal(!signal);
     const game = games.find((g) => g.id === id);

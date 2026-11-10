@@ -8,6 +8,7 @@ import ReactGridLayout, {
 } from "react-grid-layout";
 import WidgetRenderer from "./WidgetRenderer";
 import WidgetPopup from "./WidgetPopup";
+import axiosInstance from "../../api/axios";
 import { DASHBOARD_GAMES } from "./dashboard-data";
 import styles from "./dashboard.module.css";
 import "react-grid-layout/css/styles.css";
@@ -302,11 +303,13 @@ const isValidSavedLayout = (saved) =>
 
 /** @param {{ initialData?: { rows: object[], games: Record<string, object[]> } }} props */
 export default function DashboardBuilder({
-  initialData = { rows: [], games: {} },
+  initialData = null,
 }) {
   const [widgets, setWidgets] = useState(initialWidgets);
   const [layout, setLayout] = useState(initialLayout);
   const [selectedWidget, setSelectedWidget] = useState(null);
+  const [reportData, setReportData] = useState(initialData);
+  const [dataLoading, setDataLoading] = useState(initialData == null);
   const [loaded, setLoaded] = useState(false);
   const [days, setDays] = useState(30);
   const [scope, setScope] = useState("overall");
@@ -314,14 +317,52 @@ export default function DashboardBuilder({
   const { width, containerRef, mounted } = useContainerWidth();
   const rows =
     scope === "overall"
-      ? Array.isArray(initialData.rows)
-        ? initialData.rows
+      ? Array.isArray(reportData?.rows)
+        ? reportData.rows
         : []
-      : Array.isArray(initialData.games?.[scope])
-        ? initialData.games[scope]
+      : Array.isArray(reportData?.games?.[scope])
+        ? reportData.games[scope]
         : [];
   const selectedGameName =
     DASHBOARD_GAMES.find((game) => game.id === scope)?.name || "";
+
+  useEffect(() => {
+    if (initialData) return undefined;
+
+    let active = true;
+    const reportPaths = [
+      "stackoverflow/AI",
+      ...DASHBOARD_GAMES.map((game) => `stackoverflow/AI/${game.id}`),
+    ];
+    Promise.allSettled(reportPaths.map((path) => axiosInstance.get(path))).then(
+      (results) => {
+        if (!active) return;
+        const [overall, ...gameResults] = results;
+        setReportData({
+          rows:
+            overall.status === "fulfilled" && Array.isArray(overall.value.data)
+              ? overall.value.data
+              : [],
+          games: Object.fromEntries(
+            DASHBOARD_GAMES.map((game, index) => {
+              const result = gameResults[index];
+              return [
+                game.id,
+                result?.status === "fulfilled" && Array.isArray(result.value.data)
+                  ? result.value.data
+                  : [],
+              ];
+            }),
+          ),
+        });
+        setDataLoading(false);
+      },
+    );
+
+    return () => {
+      active = false;
+    };
+  }, [initialData]);
 
   useEffect(() => {
     try {
@@ -557,7 +598,12 @@ export default function DashboardBuilder({
                     </details>
                   </div>
                   <div className={styles.widgetContent}>
-                    <WidgetRenderer widget={widget} rows={rows} days={days} />
+                    <WidgetRenderer
+                      widget={widget}
+                      rows={rows}
+                      days={days}
+                      loading={dataLoading}
+                    />
                   </div>
                 </article>
               ))}

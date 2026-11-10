@@ -1,7 +1,9 @@
 import axios from "axios";
 
 const instance = axios.create({ baseURL: "/api/analytics", timeout: 25_000 });
-const CACHE_TTL_MS = 60_000;
+// Keep preloaded report responses available while users move between report
+// pages; each successful response still expires to keep data reasonably fresh.
+const CACHE_TTL_MS = 5 * 60_000;
 const MAX_ENTRIES = 100;
 const responses = new Map();
 const pending = new Map();
@@ -22,6 +24,21 @@ const getCachedEnvelope = (url, config = {}) => {
 };
 export const hasCachedResponse = (url, config = {}) =>
   getCachedEnvelope(url, config) !== undefined;
+export const seedGetResponseCache = (url, data, config = {}) => {
+  const key = cacheKey(url, config);
+  if (responses.size >= MAX_ENTRIES && !responses.has(key))
+    responses.delete(responses.keys().next().value);
+  responses.set(key, {
+    response: {
+      data,
+      status: 200,
+      statusText: "OK",
+      headers: {},
+      config,
+    },
+    expiresAt: Date.now() + CACHE_TTL_MS,
+  });
+};
 export const clearGetResponseCache = () => {
   generation += 1;
   responses.clear();

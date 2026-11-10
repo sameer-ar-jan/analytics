@@ -7,7 +7,7 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test tests/session.test.mjs tests/google-identity.test.mjs tests/charts-layout.test.mjs tests/gamewise-data.test.mjs tests/chart-data.test.mjs tests/dashboard-builder-data.test.mjs",
+    "test": "node --test tests/session.test.mjs tests/google-identity.test.mjs tests/charts-layout.test.mjs tests/gamewise-data.test.mjs tests/chart-data.test.mjs tests/dashboard-builder-data.test.mjs tests/preload.test.mjs",
     "test:integration": "node --test tests/integration.test.mjs"
   },
   "dependencies": {
