@@ -20,6 +20,10 @@ test("preload plan covers selected Dashboard data and shared report defaults", (
   assert.ok(paths.includes("month/AIMA"));
   assert.ok(paths.includes("month/values"));
   assert.ok(paths.includes("month/spendAdjustment"));
+  assert.ok(paths.includes("eventsGraph/x2blocks/2026-10-11/2026-11-09"));
+  assert.ok(
+    paths.includes("eventsGraph/geolist/x2blocks/2026-10-11/2026-11-09"),
+  );
 });
 
 test("preload plan warms each game report family without duplicate requests", () => {

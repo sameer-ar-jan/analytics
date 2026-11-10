@@ -8,7 +8,7 @@ import ReactGridLayout, {
 } from "react-grid-layout";
 import WidgetRenderer from "./WidgetRenderer";
 import WidgetPopup from "./WidgetPopup";
-import axiosInstance from "../../api/axios";
+import { getCachedOrFetch } from "../../api/axios";
 import { DASHBOARD_GAMES } from "./dashboard-data";
 import styles from "./dashboard.module.css";
 import "react-grid-layout/css/styles.css";
@@ -302,9 +302,7 @@ const isValidSavedLayout = (saved) =>
   );
 
 /** @param {{ initialData?: { rows: object[], games: Record<string, object[]> } }} props */
-export default function DashboardBuilder({
-  initialData = null,
-}) {
+export default function DashboardBuilder({ initialData = null }) {
   const [widgets, setWidgets] = useState(initialWidgets);
   const [layout, setLayout] = useState(initialLayout);
   const [selectedWidget, setSelectedWidget] = useState(null);
@@ -334,7 +332,7 @@ export default function DashboardBuilder({
       "stackoverflow/AI",
       ...DASHBOARD_GAMES.map((game) => `stackoverflow/AI/${game.id}`),
     ];
-    Promise.allSettled(reportPaths.map((path) => axiosInstance.get(path))).then(
+    Promise.allSettled(reportPaths.map((path) => getCachedOrFetch(path))).then(
       (results) => {
         if (!active) return;
         const [overall, ...gameResults] = results;
@@ -348,7 +346,8 @@ export default function DashboardBuilder({
               const result = gameResults[index];
               return [
                 game.id,
-                result?.status === "fulfilled" && Array.isArray(result.value.data)
+                result?.status === "fulfilled" &&
+                Array.isArray(result.value.data)
                   ? result.value.data
                   : [],
               ];

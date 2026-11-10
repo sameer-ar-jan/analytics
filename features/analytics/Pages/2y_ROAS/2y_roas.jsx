@@ -4,7 +4,7 @@ import { downloadRows } from "../../export";
 
 // pages/CampWise/index.jsx
 import React, { useEffect, useMemo, useState } from "react";
-import axiosInstance, { getCachedResponse } from "../../api/axios";
+import { getCachedOrFetch, getCachedResponse } from "../../api/axios";
 import TopNav from "../../Components/TopNav/TopNav";
 import Selector from "../../Components/Selector/Selector";
 import AppWiseTable from "../../Components/Table2y_ROAS/TableROAS2y";
@@ -87,28 +87,32 @@ const mapToTableRows = (data = []) =>
 export default function Roas2y({ initialRows = null }) {
   const [query, setQuery] = useState("I");
   const [game, setGame] = useState("2248");
-  const [raw, setRaw] = useState(() =>
-    initialRows ?? getCachedResponse(
-      `roas_2y/${encodeURIComponent("I")}/${encodeURIComponent("2248")}`,
-    ) ?? null,
+  const [raw, setRaw] = useState(
+    () =>
+      initialRows ??
+      getCachedResponse(
+        `roas_2y/${encodeURIComponent("I")}/${encodeURIComponent("2248")}`,
+      ) ??
+      null,
   );
   const loading = raw === null;
 
   const rows = useMemo(() => mapToTableRows(raw || []), [raw]);
   function buildApiUrl() {
-    return `roas_2y/${encodeURIComponent(
-      query
-    )}/${encodeURIComponent(game)}`;
+    return `roas_2y/${encodeURIComponent(query)}/${encodeURIComponent(game)}`;
   }
 
   useEffect(() => {
-    if (initialRows !== null && query === "I" && game === "2248") { setRaw(initialRows); return; }
+    if (initialRows !== null && query === "I" && game === "2248") {
+      setRaw(initialRows);
+      return;
+    }
     let cancelled = false;
     const url = buildApiUrl();
     setRaw(getCachedResponse(url) ?? null);
     (async () => {
       try {
-        const res = await axiosInstance.get(url);
+        const res = await getCachedOrFetch(url);
         if (!cancelled) setRaw(res.data || []);
       } catch {
         if (!cancelled) setRaw([]);

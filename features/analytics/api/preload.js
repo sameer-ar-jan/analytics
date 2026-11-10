@@ -1,4 +1,4 @@
-import axiosInstance from "./axios.js";
+import axiosInstance, { hasCachedResponse } from "./axios.js";
 import { DASHBOARD_GAMES } from "../Components/DashboardBuilder/dashboard-data.js";
 
 const CAMPAIGN_GAMES = DASHBOARD_GAMES.map(({ id }) => id);
@@ -46,6 +46,11 @@ export function buildAnalyticsPreloadPaths({
   const end = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
   const startDate = formatDate(start);
   const endDate = formatDate(end);
+  for (const id of ["2248", "x2blocks"]) {
+    const reportKey = `${id}/${startDate}/${endDate}`;
+    add("eventsGraph", reportKey);
+    add("eventsGraph", "geolist", reportKey);
+  }
   for (const id of CAMPAIGN_GAMES) {
     add("ret_roas", "AI", id);
     add("ret_roas", "AI", id, startDate, endDate, "-", "-");
@@ -64,6 +69,7 @@ async function warmPaths(paths, concurrency = 6) {
     async () => {
       while (nextIndex < paths.length) {
         const path = paths[nextIndex++];
+        if (hasCachedResponse(path)) continue;
         try {
           await axiosInstance.get(path);
         } catch {

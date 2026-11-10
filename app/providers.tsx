@@ -3,7 +3,14 @@
 import { useState, type ReactNode } from "react";
 import createCache from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useServerInsertedHTML } from "next/navigation";
+
+const theme = createTheme({
+  typography: {
+    fontFamily: "var(--app-font-family)",
+  },
+});
 
 export default function Providers({ children }: { children: ReactNode }) {
   const [{ cache, flush }] = useState(() => {
@@ -40,5 +47,9 @@ export default function Providers({ children }: { children: ReactNode }) {
       />
     );
   });
-  return <CacheProvider value={cache}>{children}</CacheProvider>;
+  return (
+    <CacheProvider value={cache}>
+      <ThemeProvider theme={theme}>{children}</ThemeProvider>
+    </CacheProvider>
+  );
 }

@@ -11,7 +11,8 @@ import React, {
   useRef,
 } from "react";
 import "../../App.css";
-import axiosInstance, {
+import {
+  getCachedOrFetch,
   getCachedResponse,
   hasCachedResponse,
 } from "../../api/axios";
@@ -360,8 +361,7 @@ export default function Overall({ initialData = null }) {
     const url = `stackoverflow/${query ? query : "AI"}`;
     if (!hasCachedResponse(url)) setLoading(true);
 
-    return axiosInstance
-      .get(url)
+    return getCachedOrFetch(url)
       .then((res) => {
         setQuestions(res.data);
       })
@@ -374,8 +374,7 @@ export default function Overall({ initialData = null }) {
   const GetSpendAdjustment = async () => {
     if (!hasCachedResponse("month/spendAdjustment")) setLoading(true);
 
-    return axiosInstance
-      .get(`month/spendAdjustment`)
+    return getCachedOrFetch(`month/spendAdjustment`)
       .then((res) => {
         let temp = [];
         let temp1 = [];
@@ -507,8 +506,7 @@ export default function Overall({ initialData = null }) {
     if (!hasCachedResponse(monthUrl) || !hasCachedResponse("month/values")) {
       setLoading(true);
     }
-    const monthlyRequest = axiosInstance
-      .get(monthUrl)
+    const monthlyRequest = getCachedOrFetch(monthUrl)
       .then((res) => {
         setQuestions1(res.data);
       })
@@ -517,8 +515,7 @@ export default function Overall({ initialData = null }) {
         setQuestions1([]);
         setLoading(false);
       });
-    const valuesRequest = axiosInstance
-      .get("month/values")
+    const valuesRequest = getCachedOrFetch("month/values")
       .then((res) => {
         const checkData = filterLatest12Months(res.data || []);
 
@@ -667,16 +664,14 @@ export default function Overall({ initialData = null }) {
     setDashboardGameLoading(true);
     setDashboardGameError("");
 
-    loadGameWiseRows(games, activeQuery, (url) => axiosInstance.get(url)).then(
-      (result) => {
-        // A previous query can finish after a newer one. Ignore it after cleanup.
-        if (!active) return;
-        setDashboardGameRows(result.rows);
-        setDashboardGameQuery(activeQuery);
-        setDashboardGameError(result.error);
-        setDashboardGameLoading(false);
-      },
-    );
+    loadGameWiseRows(games, activeQuery, getCachedOrFetch).then((result) => {
+      // A previous query can finish after a newer one. Ignore it after cleanup.
+      if (!active) return;
+      setDashboardGameRows(result.rows);
+      setDashboardGameQuery(activeQuery);
+      setDashboardGameError(result.error);
+      setDashboardGameLoading(false);
+    });
 
     return () => {
       active = false;
@@ -1015,7 +1010,10 @@ export default function Overall({ initialData = null }) {
 
     temp?.map((row) => {
       const chartDate = getReportDay(row?.Install_time);
-      if (chartDate !== null && moment(chartDate).isBetween(start, end, "day", "[]")) {
+      if (
+        chartDate !== null &&
+        moment(chartDate).isBetween(start, end, "day", "[]")
+      ) {
         if (row?.game) {
           data1?.push({
             date: chartDate,
@@ -1753,26 +1751,30 @@ export default function Overall({ initialData = null }) {
     if (!initialData) {
       requests.push(getTopQuestions("AI"), getTopQuestions1("AI"));
     } else {
-      requests.push(axiosInstance
-        .get("month/values")
-        .then((res) => {
-          const checkData = filterLatest12Months(res.data || []);
-          localStorage.setItem("latest12months", JSON.stringify(checkData));
-          const monthlyValues = {};
-          checkData
-            .filter((item) => item?.media_source === "applovin")
-            .forEach((item) => {
-              monthlyValues[item?.month?.slice(0, 3)] = item;
-            });
-          setValuesData(monthlyValues);
-        })
-        .catch(() => setValuesData({})));
+      requests.push(
+        axiosInstance
+          .get("month/values")
+          .then((res) => {
+            const checkData = filterLatest12Months(res.data || []);
+            localStorage.setItem("latest12months", JSON.stringify(checkData));
+            const monthlyValues = {};
+            checkData
+              .filter((item) => item?.media_source === "applovin")
+              .forEach((item) => {
+                monthlyValues[item?.month?.slice(0, 3)] = item;
+              });
+            setValuesData(monthlyValues);
+          })
+          .catch(() => setValuesData({})),
+      );
     }
     requests.push(GetSpendAdjustment());
     Promise.all(requests).finally(() => {
       if (active) setInitialLoadComplete(true);
     });
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [initialData]);
 
   const showPageLoading = !initialLoadComplete && (loading || dataSets.loader);

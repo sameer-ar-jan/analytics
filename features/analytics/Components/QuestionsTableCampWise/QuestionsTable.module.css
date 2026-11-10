@@ -4,6 +4,10 @@
   border-spacing: 0;
   border: 1px solid #d3d3d3;
 }
+.root,
+.root * {
+  font-family: var(--app-font-family) !important;
+}
 .styles {
   /* padding: 1rem 1rem 3rem 1rem; */
 }

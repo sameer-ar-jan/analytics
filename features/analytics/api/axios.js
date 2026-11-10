@@ -70,6 +70,10 @@ instance.get = (url, config = {}) => {
 // Existing reports expect cached response bodies rather than Axios envelopes.
 export const getCachedResponse = (url, config) =>
   getCachedEnvelope(url, config)?.data;
+export const getCachedOrFetch = (url, config = {}) => {
+  const cached = getCachedEnvelope(url, config);
+  return cached ? Promise.resolve(cached) : instance.get(url, config);
+};
 
 instance.interceptors.response.use(undefined, (error) => {
   if (error.response?.status === 401 && typeof window !== "undefined") {

@@ -7,7 +7,7 @@
   min-height: 100vh;
   background: #f7f9fd;
   color: #172033;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--app-font-family);
 }
 .sidebar {
   width: 228px;
@@ -323,7 +323,7 @@
   min-height: 190px;
   overflow: visible;
   color: #647087;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--app-font-family);
   font-size: 11px;
 }
 .d3ChartTitle {

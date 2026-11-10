@@ -14,7 +14,8 @@ import "../../App.css";
 import moment from "moment";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css";
-import axiosInstance, {
+import {
+  getCachedOrFetch,
   getCachedResponse,
   hasCachedResponse,
   seedGetResponseCache,
@@ -116,10 +117,20 @@ export default function Dashboard({ initialData = null }) {
   const [count, setCount] = useState(0);
 
   const [questions, setQuestions] = useState(
-    () => initialData?.daily || getCachedResponse("stackoverflow/AI/x2") || [],
+    () =>
+      initialData?.daily ||
+      getCachedResponse(
+        `stackoverflow/${searchParams.get("q") || "AI"}/${searchParams.get("game") || "x2"}`,
+      ) ||
+      [],
   );
   const [questions1, setQuestions1] = useState(
-    () => initialData?.monthly || getCachedResponse("month/AIMA/x2") || [],
+    () =>
+      initialData?.monthly ||
+      getCachedResponse(
+        `month/${searchParams.get("q") || "AI"}MA/${searchParams.get("game") || "x2"}`,
+      ) ||
+      [],
   );
   const [query, setQuery] = useState(searchParams.get("q") || "AI");
   const [game1, setGame1] = useState(searchParams.get("game") || "x2");
@@ -314,8 +325,7 @@ export default function Dashboard({ initialData = null }) {
     const url = `stackoverflow/${query}/${game1}`;
     if (!hasCachedResponse(url)) setLoading(true);
 
-    axiosInstance
-      .get(url)
+    getCachedOrFetch(url)
       .then((res) => {
         setQuestions(res.data);
       })
@@ -329,8 +339,7 @@ export default function Dashboard({ initialData = null }) {
   const getTopQuestions1 = (query1, game1) => {
     const url = `month/${query1}/${game1}`;
     if (!hasCachedResponse(url)) setLoading(true);
-    axiosInstance
-      .get(url)
+    getCachedOrFetch(url)
       .then((res) => {
         setQuestions1(res.data);
       })

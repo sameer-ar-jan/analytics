@@ -1,11 +1,7 @@
 [class$="-MuiTableCell-root"] {
-  /* Styles for classes ending with "-MuiTableCell-root" */
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif !important;
-
-  /* text-align: right !important; */
+  font-family: var(--app-font-family) !important;
   padding: 0px 16px !important;
 }
 [class$="-MuiTableCell-root"] {
-  /* Styles for classes ending with "-MuiTableCell-root" */
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: var(--app-font-family) !important;
 }

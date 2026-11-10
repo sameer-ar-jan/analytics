@@ -35,7 +35,7 @@
 }
 .status-screen {
   padding: 80px 32px;
-  font-family: system-ui, sans-serif;
+  font-family: var(--app-font-family);
 }
 .status-screen button {
   padding: 10px 18px;

@@ -4,7 +4,7 @@ import { downloadRows } from "../../export";
 
 // pages/CampWise/index.jsx
 import React, { useEffect, useMemo, useState } from "react";
-import axiosInstance, { getCachedResponse } from "../../api/axios";
+import { getCachedOrFetch, getCachedResponse } from "../../api/axios";
 import TopNav from "../../Components/TopNav/TopNav";
 import Selector from "../../Components/Selector/Selector";
 import CampWiseTable from "../../Components/QuestionsTableCampWise/QuestionsTableCampWise";
@@ -75,7 +75,6 @@ const GAMESQuery = [
 
 // keep numbers raw (table formats/rounds)
 const mapToTableRows = (data = []) => {
-  
   data?.map((x, i) => ({
     id: `${x.dt?.value}-${x.c}-${x.pid}-${i}`,
     date: x.dt?.value || "",
@@ -319,8 +318,12 @@ export default function CampWise({ initialData = null }) {
   const [showDateCol, setShowDateCol] = useState(true);
   const [showGeoCol, setShowGeoCol] = useState(true);
 
-  const [startDate, setStartDate] = useState(initialData?.startDate || fmtDateString(daysAgo(30)));
-  const [endDate, setEndDate] = useState(initialData?.endDate || fmtDateString(yesterday()));
+  const [startDate, setStartDate] = useState(
+    initialData?.startDate || fmtDateString(daysAgo(30)),
+  );
+  const [endDate, setEndDate] = useState(
+    initialData?.endDate || fmtDateString(yesterday()),
+  );
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -357,7 +360,9 @@ export default function CampWise({ initialData = null }) {
   const [raw, setRaw] = useState(
     () => initialData?.rows ?? getCachedResponse(initialFilteredUrl) ?? null,
   );
-  const [baseForOptions, setBaseForOptions] = useState(initialData?.options || []);
+  const [baseForOptions, setBaseForOptions] = useState(
+    initialData?.options || [],
+  );
   const loading = raw === null;
 
   const [openCharts, setOpenCharts] = useState({
@@ -416,15 +421,15 @@ export default function CampWise({ initialData = null }) {
 
   // Fetch base data (options)
   useEffect(() => {
-    if (initialData && query === "AI" && game === "x2") { setBaseForOptions(initialData.options); return; }
+    if (initialData && query === "AI" && game === "x2") {
+      setBaseForOptions(initialData.options);
+      return;
+    }
     let cancelled = false;
     (async () => {
       try {
-        const res = await axiosInstance.get(
-          buildApiUrl({ withFilters: false }),
-        );
+        const res = await getCachedOrFetch(buildApiUrl({ withFilters: false }));
         if (!cancelled) setBaseForOptions(res.data || []);
-        
       } catch {
         if (!cancelled) setBaseForOptions([]);
       }
@@ -436,14 +441,24 @@ export default function CampWise({ initialData = null }) {
 
   // Fetch filtered data
   useEffect(() => {
-    if (initialData && query === "AI" && game === "x2" && startDate === initialData.startDate && endDate === initialData.endDate && !campaign && !media) { setRaw(initialData.rows); return; }
+    if (
+      initialData &&
+      query === "AI" &&
+      game === "x2" &&
+      startDate === initialData.startDate &&
+      endDate === initialData.endDate &&
+      !campaign &&
+      !media
+    ) {
+      setRaw(initialData.rows);
+      return;
+    }
     let cancelled = false;
     const url = buildApiUrl({ withFilters: true });
     setRaw(getCachedResponse(url) ?? null);
     (async () => {
       try {
-        
-        const res = await axiosInstance.get(url);
+        const res = await getCachedOrFetch(url);
         if (!cancelled) setRaw(res?.data || []);
       } catch {
         if (!cancelled) setRaw([]);
