@@ -235,7 +235,7 @@ const WIDGET_DEFINITIONS = [
     chartType: "gauge",
     goal: 50000,
   },
-  // ...SOURCE_VIEWS,
+  ...SOURCE_VIEWS,
   { type: "media-table", title: "Media Source Performance", kind: "table" },
 ];
 const WIDGET_BY_TYPE = Object.fromEntries(
