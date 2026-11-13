@@ -12,6 +12,7 @@ import Popover from "@mui/material/Popover";
 import { Button, Tooltip } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import WidgetRenderer from "./WidgetRenderer";
+import { SOURCE_VIEWS } from "./source-insights";
 import WidgetPopup from "./WidgetPopup";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
@@ -234,6 +235,7 @@ const WIDGET_DEFINITIONS = [
     chartType: "gauge",
     goal: 50000,
   },
+  ...SOURCE_VIEWS,
   { type: "media-table", title: "Media Source Performance", kind: "table" },
 ];
 const WIDGET_BY_TYPE = Object.fromEntries(

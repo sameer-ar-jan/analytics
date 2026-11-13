@@ -341,7 +341,7 @@ export default function QuestionsTableAppWise({
                   {CORE_COLS.map((col) => {
                     const raw = row[col.key];
                     const val = renderValue(col, raw);
-                    const isZero = Number(val) === 0;
+                    const isZero = isZeroish(val);
 
                     const isSticky = col.key === "year" || col.key === "month";
                     const left = STICKY_OFFSETS[col.key] ?? undefined;
@@ -359,7 +359,7 @@ export default function QuestionsTableAppWise({
                       <Comp
                         key={col.key}
                         align={col.align}
-                        className={classes?.tableCellM}
+                        className={`${classes.tableCellM} ${isZero ? classes.zeroValue : ""}`}
                         sx={{
                           position: isSticky ? "sticky" : "static",
                           left,
@@ -376,7 +376,6 @@ export default function QuestionsTableAppWise({
                           ...(col.numeric && {
                             fontVariantNumeric: "tabular-nums",
                           }),
-                          ...(isZero && { color: "text.disabled" }),
                         }}
                       >
                         {val}
@@ -388,13 +387,11 @@ export default function QuestionsTableAppWise({
                   {METRIC_COLS.map((col) => {
                     const raw = row[col.key];
                     const val = renderValue(col, raw);
-                    const isZero = Number(val) === 0;
-
                     return (
                       <TableCell
                         key={col.key}
                         align={col.align}
-                        className={classes?.tableCellM1}
+                        className={`${classes.tableCellM1} ${isZeroish(val) ? classes.zeroValue : ""}`}
                         sx={{
                           py: 0,
                           whiteSpace: "nowrap",
@@ -402,7 +399,6 @@ export default function QuestionsTableAppWise({
                           ...(col.numeric && {
                             fontVariantNumeric: "tabular-nums",
                           }),
-                          ...(isZero && { color: "text.disabled" }),
                         }}
                       >
                         {val}
@@ -418,7 +414,7 @@ export default function QuestionsTableAppWise({
                       <TableCell
                         key={col.key}
                         align={col.align}
-                        className={classes?.tableCellM1}
+                        className={`${classes.tableCellM1} ${isZeroish(val) ? classes.zeroValue : ""}`}
                         sx={[
                           {
                             py: 0,
@@ -428,11 +424,6 @@ export default function QuestionsTableAppWise({
                               fontVariantNumeric: "tabular-nums",
                             }),
                           },
-                          // force grey when the rendered value is effectively zero
-                          isZeroish(val) &&
-                            ((theme) => ({
-                              color: `${theme.palette.text.disabled} !important`,
-                            })),
                         ]}
                       >
                         {val}

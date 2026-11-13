@@ -160,3 +160,48 @@ test("custom dashboard dates include both boundaries across metrics and chart ag
   assert.equal(buildSourceEfficiency(rows, range)[0].installs, 20);
   assert.deepEqual(filterDashboardRows(rows, { start: new Date(2024, 0, 1), end: new Date(2024, 0, 2) }), []);
 });
+
+const { summarizeSources, buildSourceInsights, pearson, SOURCE_VIEWS } = await import("../features/analytics/Components/DashboardBuilder/source-insights.js");
+
+test("source insights weight reported rates, preserve zeros, and exclude absent rates", () => {
+  const totals = summarizeSources([
+    reportRow("2026-11-05", { Facebook_cost: 100, Facebook_users: 20, fb_r0: 0, fb_r7: 10, facebook_ret1: 50, facebook_ret7: 20 }),
+    reportRow("2026-11-06", { Facebook_cost: 300, Facebook_users: 10, fb_r7: 30, facebook_ret1: 20 }),
+  ]);
+  assert.equal(totals.length, 1);
+  assert.equal(totals[0].cpi, 400 / 30);
+  assert.equal(totals[0].r0, 0);
+  assert.equal(totals[0].r7, 25);
+  assert.equal(totals[0].ret1, 40);
+  assert.equal(totals[0].ret7, 20);
+  assert.equal(summarizeSources([reportRow("2026-11-06")])[0].r7, null);
+  assert.equal(summarizeSources([{ googleadwords__ret7: 12 }])[0].ret7, 12);
+});
+
+test("insights compare adjacent equal calendar periods, and aggregate duplicate source-days", () => {
+  const rows = [
+    reportRow("2026-11-02", { Facebook_cost: 70 }),
+    reportRow("2026-11-03", { Facebook_cost: 30 }),
+    reportRow("2026-11-04", { Facebook_cost: 20 }),
+    reportRow("2026-11-05", { Facebook_cost: 60 }),
+    reportRow("2026-11-05", { Facebook_cost: 40 }),
+    reportRow("2026-11-06", { Facebook_cost: 100 }),
+    reportRow("2026-11-07", { Facebook_cost: 999 }),
+  ];
+  const model = buildSourceInsights(rows, { start: new Date(2026, 10, 5), end: new Date(2026, 10, 6) }, now);
+  assert.equal(model.totals[0].spend, 200);
+  assert.equal(model.previous[0].spend, 50);
+  assert.equal(model.daily.length, 2);
+  assert.equal(model.daily[0].spend, 100);
+  assert.equal(model.hasPrevious, true);
+  assert.equal(buildSourceInsights([], 30, now).hasPrevious, false);
+});
+
+test("correlation handles missing pairs and constant metrics without fabricating results", () => {
+  assert.equal(pearson([{ x: 1, y: 2 }, { x: 2, y: 4 }, { x: 3, y: 6 }, { x: null, y: 7 }], "x", "y"), 1);
+  assert.equal(pearson([{ x: 1, y: 3 }, { x: 2, y: 2 }, { x: 3, y: 1 }], "x", "y"), -1);
+  assert.equal(pearson([{ x: 1, y: 2 }, { x: 1, y: 3 }, { x: 1, y: 4 }], "x", "y"), null);
+  assert.equal(pearson([{ x: 1, y: 2 }], "x", "y"), null);
+  assert.equal(SOURCE_VIEWS.length, 20);
+  assert.equal(new Set(SOURCE_VIEWS.map((v) => v.type)).size, 20);
+});

@@ -352,7 +352,7 @@ export default function CampWiseTable({
                     <Comp
                       key={col.key}
                       align={col.align}
-                      className={classes?.tableCellM1}
+                      className={`${classes.tableCellM1} ${isZeroish(val) ? classes.zeroValue : ""}`}
                       sx={[
                         {
                           position: isSticky ? "sticky" : "static",
@@ -375,10 +375,6 @@ export default function CampWiseTable({
                             fontVariantNumeric: "tabular-nums",
                           }),
                         },
-                        isZeroish(val) &&
-                          ((theme) => ({
-                            color: `${theme.palette.text.disabled} !important`,
-                          })),
                       ]}
                     >
                       {val}

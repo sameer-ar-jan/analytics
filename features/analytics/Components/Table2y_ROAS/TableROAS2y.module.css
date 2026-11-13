@@ -198,3 +198,8 @@
   top: 65 !important;
   z-index: 10 !important;
 }
+
+.tableCellM.zeroValue,
+.tableCellM1.zeroValue {
+  color: #9e9e9e !important;
+}

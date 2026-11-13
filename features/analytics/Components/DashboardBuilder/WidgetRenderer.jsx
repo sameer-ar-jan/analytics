@@ -4,6 +4,7 @@ import React, { useMemo, useState } from "react";
 import LineChart from "../Charts/LineChart";
 import { getReportDay } from "../Charts/chartDates";
 import D3Chart from "./D3Chart";
+import SourceInsight from "./SourceInsight";
 import {
   buildDailySeries,
   buildSourceTotals,
@@ -283,7 +284,7 @@ export default function WidgetRenderer({
 }) {
   const period = dateRange || days;
   const chartData = useMemo(() => {
-    if (widget?.kind !== "chart") return [];
+    if (widget?.kind !== "chart" || widget.engine === "source-insight") return [];
     if (widget.metric === "source-efficiency")
       return buildSourceEfficiency(rows, period);
     if (widget.metric === "source-total-spend")
@@ -309,6 +310,9 @@ export default function WidgetRenderer({
   }
   if (widget.kind === "table") {
     return <MediaSourcesTable rows={rows} days={period} periodLabel={periodLabel} />;
+  }
+  if (widget.engine === "source-insight") {
+    return <SourceInsight widget={widget} rows={rows} period={period} />;
   }
   if (!chartData.length) {
     return (
