@@ -156,9 +156,11 @@ const toLocalDateKey = (timestamp) => {
 export function filterDashboardRows(rows, days = 30, now = new Date()) {
   if (!Array.isArray(rows)) return [];
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const start = new Date(today);
-  start.setDate(start.getDate() - Math.max(1, Number(days) || 30) + 1);
-  const end = new Date(today);
+  const customRange = typeof days === "object" && days !== null;
+  const start = customRange ? new Date(days.start) : new Date(today);
+  if (!customRange) start.setDate(start.getDate() - Math.max(1, Number(days) || 30) + 1);
+  start.setHours(0, 0, 0, 0);
+  const end = customRange ? new Date(days.end) : new Date(today);
   end.setHours(23, 59, 59, 999);
 
   return rows.filter((row) => {
@@ -225,6 +227,8 @@ export function buildDailySeries(rows, metric, days = 30, now = new Date()) {
       bucket.values.set(label, (bucket.values.get(label) || 0) + value);
     }
     buckets.set(key, bucket);
+
+    console.log("buckets", buckets);
   });
 
   return Array.from(buckets.entries())

@@ -6,8 +6,15 @@ import ReactGridLayout, {
   useContainerWidth,
   verticalCompactor,
 } from "react-grid-layout";
+import moment from "moment";
+import { DateRangePicker } from "react-date-range";
+import Popover from "@mui/material/Popover";
+import { Button, Tooltip } from "@mui/material";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import WidgetRenderer from "./WidgetRenderer";
 import WidgetPopup from "./WidgetPopup";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 import { getCachedOrFetch } from "../../api/axios";
 import { DASHBOARD_GAMES } from "./dashboard-data";
 import styles from "./dashboard.module.css";
@@ -255,6 +262,7 @@ const metricCount = initialWidgets.filter(
 const chartCount = initialWidgets.filter(
   (widget) => widget.kind === "chart",
 ).length;
+
 const tableY = 8 + Math.ceil(chartCount / 2) * 10;
 const initialLayout = initialWidgets.map((widget, index) => {
   if (widget.kind === "metric") {
@@ -304,6 +312,8 @@ const isValidSavedLayout = (saved) =>
 /** @param {{ initialData?: { rows: object[], games: Record<string, object[]> } }} props */
 export default function DashboardBuilder({ initialData = null }) {
   const [widgets, setWidgets] = useState(initialWidgets);
+  const [start, setStart] = useState(moment().subtract(30, "days"));
+  const [end, setEnd] = useState(moment().subtract(1, "days"));
   const [layout, setLayout] = useState(initialLayout);
   const [selectedWidget, setSelectedWidget] = useState(null);
   const [reportData, setReportData] = useState(initialData);
@@ -312,6 +322,7 @@ export default function DashboardBuilder({ initialData = null }) {
   const [days, setDays] = useState(30);
   const [scope, setScope] = useState("overall");
   const [storageError, setStorageError] = useState("");
+  const [anchorEl, setAnchorEl] = React.useState(null);
   const { width, containerRef, mounted } = useContainerWidth();
   const rows =
     scope === "overall"
@@ -323,7 +334,15 @@ export default function DashboardBuilder({ initialData = null }) {
         : [];
   const selectedGameName =
     DASHBOARD_GAMES.find((game) => game.id === scope)?.name || "";
-
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleClick = (event) => {
+    setState([{ startDate: start.toDate(), endDate: end.toDate(), key: "selection" }]);
+    setAnchorEl(event.currentTarget);
+  };
+  const dateRange = { start: start.toDate(), end: end.toDate() };
+  const periodLabel = `${start.format("DD MMM YYYY")} – ${end.format("DD MMM YYYY")}`;
   useEffect(() => {
     if (initialData) return undefined;
 
@@ -431,7 +450,16 @@ export default function DashboardBuilder({ initialData = null }) {
       ];
     });
   };
+  const open1 = Boolean(anchorEl);
 
+  const [state, setState] = useState([
+    {
+      startDate: start.toDate(),
+      endDate: end.toDate(),
+      key: "selection",
+    },
+  ]);
+  const id = open1 ? "simple-popover" : undefined;
   const removeWidget = (id) => {
     setWidgets((current) => current.filter((widget) => widget.id !== id));
     setLayout((current) => current.filter((item) => item.i !== id));
@@ -477,6 +505,14 @@ export default function DashboardBuilder({ initialData = null }) {
           </div>
           <div className={styles.toolbar}>
             <label>
+              <span>Date range</span>
+              <Tooltip title="Date filter">
+                <Button startIcon={<CalendarMonthIcon />} onClick={handleClick} aria-label="Date filter">
+                  {periodLabel}
+                </Button>
+              </Tooltip>
+            </label>
+            <label>
               <span>Data scope</span>
               <select
                 aria-label="Data scope"
@@ -496,8 +532,14 @@ export default function DashboardBuilder({ initialData = null }) {
               <select
                 aria-label="Report period"
                 value={days}
-                onChange={(event) => setDays(Number(event.target.value))}
+                onChange={(event) => {
+                  const nextDays = Number(event.target.value);
+                  setDays(nextDays);
+                  setStart(moment().subtract(nextDays, "days"));
+                  setEnd(moment().subtract(1, "days"));
+                }}
               >
+                {days === "custom" && <option value="custom">Custom range</option>}
                 <option value={7}>Last 7 days</option>
                 <option value={30}>Last 30 days</option>
                 <option value={90}>Last 90 days</option>
@@ -583,7 +625,7 @@ export default function DashboardBuilder({ initialData = null }) {
                       <div>
                         <button
                           type="button"
-                          onClick={() => setSelectedWidget({ ...widget, days })}
+                          onClick={() => setSelectedWidget(widget)}
                         >
                           Expand
                         </button>
@@ -601,6 +643,8 @@ export default function DashboardBuilder({ initialData = null }) {
                       widget={widget}
                       rows={rows}
                       days={days}
+                      dateRange={dateRange}
+                      periodLabel={periodLabel}
                       loading={dataLoading}
                     />
                   </div>
@@ -628,9 +672,67 @@ export default function DashboardBuilder({ initialData = null }) {
         <WidgetPopup
           widget={selectedWidget}
           rows={rows}
-          onClose={() => setSelectedWidget(null)}
+          days={days}
+          dateRange={dateRange}
+          periodLabel={periodLabel}
+          loading={dataLoading}
+          onDateFilterClick={handleClick}
+          onClose={() => { handleClose(); setSelectedWidget(null); }}
         />
       )}
+      <Popover
+        id={id}
+        open={open1}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        sx={{ zIndex: 1700 }}
+        PaperProps={{
+          sx: { zIndex: 1701 },
+        }}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+      >
+        {" "}
+        <div
+          style={{
+            paddingBottom: "10px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <DateRangePicker
+            onChange={(item) => {
+              setState([item.selection]);
+            }}
+            showSelectionPreview={true}
+            moveRangeOnFirstSelection={false}
+            months={2}
+            ranges={state}
+            direction="horizontal"
+          />
+          <Button
+            sx={{
+              height: 50,
+            }}
+            onClick={() => {
+              setStart(moment(state[0].startDate));
+              setEnd(moment(state[0].endDate));
+              setDays("custom");
+              handleClose();
+            }}
+          >
+            Filter
+          </Button>
+        </div>
+      </Popover>
     </div>
   );
 }

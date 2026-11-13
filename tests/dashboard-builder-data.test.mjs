@@ -142,3 +142,21 @@ test("daily series are grouped by day and include per-source spend series", () =
     [7, 9],
   );
 });
+
+
+test("custom dashboard dates include both boundaries across metrics and chart aggregations", () => {
+  const rows = [
+    reportRow("2025-01-01"),
+    reportRow("2025-01-02"),
+    reportRow("2025-01-03"),
+    reportRow("2025-01-04"),
+    { total_users: 99 },
+  ];
+  const range = { start: new Date(2025, 0, 2), end: new Date(2025, 0, 3) };
+  assert.deepEqual(filterDashboardRows(rows, range, now), rows.slice(1, 3));
+  assert.equal(getMetricTotal(filterDashboardRows(rows, range), "users"), 20);
+  assert.deepEqual(buildDailySeries(rows, "users", range).map(({ value }) => value), [10, 10]);
+  assert.equal(buildSourceTotals(rows, range, "spend")[0].value, 100);
+  assert.equal(buildSourceEfficiency(rows, range)[0].installs, 20);
+  assert.deepEqual(filterDashboardRows(rows, { start: new Date(2024, 0, 1), end: new Date(2024, 0, 2) }), []);
+});

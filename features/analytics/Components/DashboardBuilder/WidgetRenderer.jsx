@@ -45,7 +45,7 @@ const formatValue = (value, currency = false) => {
   return currency ? `$${formatted}` : formatted;
 };
 
-function MetricWidget({ widget, rows, days }) {
+function MetricWidget({ widget, rows, days, periodLabel }) {
   const definition = METRIC_WIDGETS[widget.metric];
   const periodRows = useMemo(
     () => filterDashboardRows(rows, days),
@@ -64,13 +64,13 @@ function MetricWidget({ widget, rows, days }) {
       <div>
         <p>{definition.label}</p>
         <strong>{formatValue(value, definition.currency)}</strong>
-        <small>Selected {days}-day period</small>
+        <small>{periodLabel || `Selected ${days}-day period`}</small>
       </div>
     </div>
   );
 }
 
-function MediaSourcesTable({ rows, days }) {
+function MediaSourcesTable({ rows, days, periodLabel }) {
   const [sourceFilter, setSourceFilter] = useState("all");
   const [search, setSearch] = useState("");
   const visibleSources = useMemo(() => {
@@ -266,8 +266,7 @@ function MediaSourcesTable({ rows, days }) {
           daily rows
         </span>
         <span>
-          <strong>{visibleSources.length}</strong> media sources <i /> Last{" "}
-          {days} days
+          <strong>{visibleSources.length}</strong> media sources <i /> {periodLabel || `Last ${days} days`}
         </span>
       </div>
     </div>
@@ -278,18 +277,21 @@ export default function WidgetRenderer({
   widget,
   rows = [],
   days = 30,
+  dateRange,
+  periodLabel,
   loading = false,
 }) {
+  const period = dateRange || days;
   const chartData = useMemo(() => {
     if (widget?.kind !== "chart") return [];
     if (widget.metric === "source-efficiency")
-      return buildSourceEfficiency(rows, days);
+      return buildSourceEfficiency(rows, period);
     if (widget.metric === "source-total-spend")
-      return buildSourceTotals(rows, days, "spend");
-    return buildDailySeries(rows, widget.metric, days);
-  }, [widget, rows, days]);
-  const end = new Date();
-  const start = new Date(
+      return buildSourceTotals(rows, period, "spend");
+    return buildDailySeries(rows, widget.metric, period);
+  }, [widget, rows, period]);
+  const end = dateRange?.end || new Date();
+  const start = dateRange?.start || new Date(
     end.getFullYear(),
     end.getMonth(),
     end.getDate() - days + 1,
@@ -303,10 +305,10 @@ export default function WidgetRenderer({
       </p>
     );
   if (widget.kind === "metric") {
-    return <MetricWidget widget={widget} rows={rows} days={days} />;
+    return <MetricWidget widget={widget} rows={rows} days={period} periodLabel={periodLabel} />;
   }
   if (widget.kind === "table") {
-    return <MediaSourcesTable rows={rows} days={days} />;
+    return <MediaSourcesTable rows={rows} days={period} periodLabel={periodLabel} />;
   }
   if (!chartData.length) {
     return (
