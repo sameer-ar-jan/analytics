@@ -235,7 +235,7 @@ const WIDGET_DEFINITIONS = [
     chartType: "gauge",
     goal: 50000,
   },
-  ...SOURCE_VIEWS,
+  // ...SOURCE_VIEWS,
   { type: "media-table", title: "Media Source Performance", kind: "table" },
 ];
 const WIDGET_BY_TYPE = Object.fromEntries(
@@ -340,7 +340,9 @@ export default function DashboardBuilder({ initialData = null }) {
     setAnchorEl(null);
   };
   const handleClick = (event) => {
-    setState([{ startDate: start.toDate(), endDate: end.toDate(), key: "selection" }]);
+    setState([
+      { startDate: start.toDate(), endDate: end.toDate(), key: "selection" },
+    ]);
     setAnchorEl(event.currentTarget);
   };
   const dateRange = { start: start.toDate(), end: end.toDate() };
@@ -509,7 +511,11 @@ export default function DashboardBuilder({ initialData = null }) {
             <label>
               <span>Date range</span>
               <Tooltip title="Date filter">
-                <Button startIcon={<CalendarMonthIcon />} onClick={handleClick} aria-label="Date filter">
+                <Button
+                  startIcon={<CalendarMonthIcon />}
+                  onClick={handleClick}
+                  aria-label="Date filter"
+                >
                   {periodLabel}
                 </Button>
               </Tooltip>
@@ -541,7 +547,9 @@ export default function DashboardBuilder({ initialData = null }) {
                   setEnd(moment().subtract(1, "days"));
                 }}
               >
-                {days === "custom" && <option value="custom">Custom range</option>}
+                {days === "custom" && (
+                  <option value="custom">Custom range</option>
+                )}
                 <option value={7}>Last 7 days</option>
                 <option value={30}>Last 30 days</option>
                 <option value={90}>Last 90 days</option>
@@ -679,7 +687,10 @@ export default function DashboardBuilder({ initialData = null }) {
           periodLabel={periodLabel}
           loading={dataLoading}
           onDateFilterClick={handleClick}
-          onClose={() => { handleClose(); setSelectedWidget(null); }}
+          onClose={() => {
+            handleClose();
+            setSelectedWidget(null);
+          }}
         />
       )}
       <Popover
